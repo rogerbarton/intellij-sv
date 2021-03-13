@@ -16,6 +16,10 @@
 
         <lang.parserDefinition language="Sv"
                                implementationClass="com.github.rogerbarton.intellijsv.psi.SvParserDefinition"/>
+
+        <lang.syntaxHighlighterFactory language="Sv"
+                                       implementationClass="com.github.rogerbarton.intellijsv.SvSyntaxHighlighterFactory"/>
+        <colorSettingsPage implementation="com.github.rogerbarton.intellijsv.SvColorSettingsPage"/>
     </extensions>
 
     <applicationListeners>

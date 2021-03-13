@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.github.rogerbarton.intellijsv</id>
-    <name>intellij-sv</name>
-    <vendor>rogerbarton</vendor>
+    <name>System Verilog for IntelliJ</name>
+    <vendor>Roger Barton</vendor>
 
     <!-- Product and plugin compatibility requirements -->
     <!-- https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
@@ -10,6 +10,9 @@
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceImplementation="com.github.rogerbarton.intellijsv.services.MyApplicationService"/>
         <projectService serviceImplementation="com.github.rogerbarton.intellijsv.services.MyProjectService"/>
+
+        <fileType name="System Verilog File" implementationClass="com.github.rogerbarton.intellijsv.SvFileType"
+                  fieldName="INSTANCE" language="Sv" extensions="sv"/>
     </extensions>
 
     <applicationListeners>

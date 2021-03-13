@@ -1,0 +1,20 @@
+{
+    parserClass="com.github.rogerbarton.intellijsv.parser.SvParser"
+
+    extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+    psiClassPrefix="Sv"
+    psiImplClassSuffix="Impl"
+    psiPackage="com.github.rogerbarton.intellijsv.psi"
+    psiImplPackage="com.github.rogerbarton.intellijsv.psi.impl"
+
+    elementTypeHolderClass="com.github.rogerbarton.intellijsv.psi.SvTypes"
+    elementTypeClass="com.github.rogerbarton.intellijsv.psi.SvElementType"
+    tokenTypeClass="com.github.rogerbarton.intellijsv.psi.SvTokenType"
+}
+
+svFile ::= item_*
+
+private item_ ::= (property|COMMENT|CRLF)
+
+property ::= (KEY? SEPARATOR VALUE?) | KEY

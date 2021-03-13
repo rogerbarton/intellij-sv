@@ -13,6 +13,9 @@
 
         <fileType name="System Verilog File" implementationClass="com.github.rogerbarton.intellijsv.SvFileType"
                   fieldName="INSTANCE" language="Sv" extensions="sv"/>
+
+        <lang.parserDefinition language="Sv"
+                               implementationClass="com.github.rogerbarton.intellijsv.psi.SvParserDefinition"/>
     </extensions>
 
     <applicationListeners>

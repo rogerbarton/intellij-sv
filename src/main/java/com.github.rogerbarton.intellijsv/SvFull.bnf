@@ -89,8 +89,8 @@ program_declaration ::=
     
 program_nonansi_header ::=
 
-    { attribute_instance } "program" [ lifetime ] program_identifier{ package_import_declaration } [ parameter_port_list ]
-list_of_ports ";"
+    { attribute_instance } "program" [ lifetime ] program_identifier{ package_import_declaration } [ parameter_port_list ] list_of_ports ";"
+
 program_ansi_header ::=
 
     { attribute_instance } "program" [ lifetime ] program_identifier{ package_import_declaration } [
@@ -1613,9 +1613,10 @@ event_control ::=
 
       "@" hierarchical_event_identifier
     | "@ (" event_expression ")"
-//  | "@"*
+    | "@"*
     | "@ (*)"
     | "@" ps_or_hierarchical_sequence_identifier
+
 event_expression ::=
 
     [ edge_identifier ] expression [ "iff" expression ]
@@ -1771,6 +1772,7 @@ for_variable_declaration ::=
     [ "var" ] data_type variable_identifier "=" expression { "," variable_identifier "=" expression }
 
 for_step ::= for_step_assignment { "," for_step_assignment }
+
 for_step_assignment ::=
 
       operator_assignment
@@ -1845,6 +1847,7 @@ clocking_declaration ::=
       "endclocking" [ ":" clocking_identifier ]
     | "global" "clocking" [ clocking_identifier ] clocking_event ";"
       "endclocking" [ ":" clocking_identifier ]
+
 clocking_event ::=
 
       "@" identifier
@@ -2621,20 +2624,17 @@ attr_name ::= identifier
 
 // A.9.2 Comments 
 
-comment ::= one_line_comment
-    | block_comment
+comment ::= one_line_comment | block_comment
 one_line_comment ::= "//" comment_text n
 block_comment ::= "/"* comment_text "*/"
-comment_text ::= {
-Any_ASCII_character }
+comment_text ::= { Any_ASCII_character }
 
 // A.9.3 Identifiers 
 
 array_identifier ::= identifier
 block_identifier ::= identifier
 bin_identifier ::= identifier
-c_identifier ::= [
-"a"-"zA"-"Z_" ] { [ "a"-"zA"-"Z0"-"9_" ] }
+c_identifier ::= [ "a"-"zA"-"Z_" ] { [ "a"-"zA"-"Z0"-"9_" ] }
 cell_identifier ::= identifier
 checker_identifier ::= identifier
 class_identifier ::= identifier

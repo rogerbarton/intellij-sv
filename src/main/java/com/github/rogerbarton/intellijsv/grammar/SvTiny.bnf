@@ -24,7 +24,7 @@
 
 // A.1.2 SystemVerilog source text
 
-source_text ::= [ timeunits_declaration ] { description }
+source_text ::= [ timeunits_declaration ] description *
 
 description ::=
 
@@ -32,7 +32,7 @@ description ::=
 
 module_ansi_header ::=
 
-    { attribute_instance } module_keyword [ lifetime ]  module_identifier { package_import_declaration } 
+     attribute_instance * module_keyword space [ lifetime space ]  module_identifier package_import_declaration *
     [ parameter_port_list ] [ list_of_port_declarations ] ";"
     
 module_declaration ::= 
@@ -45,10 +45,10 @@ module_keyword ::= "module" | "macromodule"
 
 timeunits_declaration ::=
 
-      "timeunit" space time_literal space [ "/" space time_literal space ] ";"
-    | "timeprecision" space time_literal [space] ";"
-    | "timeunit" space time_literal [space] ";" [space] "timeprecision" space time_literal [space] ";"
-    | "timeprecision" space time_literal [space] ";" [space] "timeunit" space time_literal [space]";"
+      "timeunit" space time_literal [ "/" time_literal ] ";"
+    | "timeprecision" space time_literal ";"
+    | "timeunit" space time_literal ";" "timeprecision" space time_literal ";"
+    | "timeprecision" space time_literal ";" "timeunit" space time_literal ";"
 
 // A.1.3 Module parameters and ports 
 
@@ -857,10 +857,10 @@ real_number ::= fixed_point_number | unsigned_number [ "." unsigned_number ] exp
 fixed_point_number ::= unsigned_number "." unsigned_number
 exp ::= "e" | "E"
 
-unsigned_number ::= decimal_digit { "_" | decimal_digit }
-binary_value ::= binary_digit { "_" | binary_digit }
-octal_value ::= octal_digit { "_" | octal_digit }
-hex_value ::= hex_digit { "_" | hex_digit }
+unsigned_number ::= decimal_digit ( '_' | decimal_digit ) *
+binary_value ::= binary_digit ( "_" | binary_digit ) *
+octal_value ::= octal_digit ( "_" | octal_digit ) *
+hex_value ::= hex_digit ( "_" | hex_digit ) *
 decimal_base ::= "'"["s"|"S"]"d" | "'"["s"|"S"]"D"
 binary_base ::= "'"["s"|"S"]"b" | "'"["s"|"S"]"B"
 octal_base ::= "'"["s"|"S"]"o" | "'"["s"|"S"]"O"
@@ -885,7 +885,7 @@ string_literal ::= """ { Any_ASCII_Characters } """ //TODO
 
 // A.9.1 Attributes 
 
-attribute_instance ::= "("* attr_spec { "," attr_spec } "*)"
+attribute_instance ::= "(*" attr_spec ( "," attr_spec ) * "*)"
 attr_spec ::= attr_name [ "=" constant_expression ]
 attr_name ::= identifier
 

@@ -17,6 +17,10 @@
         simple_identifier = "regexp:[a-zA-Z_][a-zA-Z0-9_$]*"
         line_comment="regexp://.*"
         block_comment="regexp:/\*(.|\n)*\*/"
+        unsigned_number='regexp:\d[\d_]*'
+        binary_value='regexp:[01XxZz?][01_XxZz?]*'
+        octal_value='regexp:[0-7XxZz?][0-7_XxZz?]*'
+        hex_value='regexp:[0-7XxZz?][0-7_XxZz?]*'
     ]
 }
 
@@ -857,10 +861,10 @@ real_number ::= fixed_point_number | unsigned_number [ "." unsigned_number ] exp
 fixed_point_number ::= unsigned_number "." unsigned_number
 exp ::= "e" | "E"
 
-unsigned_number ::= decimal_digit ( '_' | decimal_digit ) *
-binary_value ::= binary_digit ( "_" | binary_digit ) *
-octal_value ::= octal_digit ( "_" | octal_digit ) *
-hex_value ::= hex_digit ( "_" | hex_digit ) *
+//unsigned_number ::= decimal_digit ( '_' | decimal_digit ) *
+//binary_value ::= binary_digit ( "_" | binary_digit ) *
+//octal_value ::= octal_digit ( "_" | octal_digit ) *
+//hex_value ::= hex_digit ( "_" | hex_digit ) *
 decimal_base ::= "'"["s"|"S"]"d" | "'"["s"|"S"]"D"
 binary_base ::= "'"["s"|"S"]"b" | "'"["s"|"S"]"B"
 octal_base ::= "'"["s"|"S"]"o" | "'"["s"|"S"]"O"

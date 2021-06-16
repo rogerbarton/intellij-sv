@@ -1,6 +1,6 @@
 <idea-plugin>
     <id>com.github.rogerbarton.intellijsv</id>
-    <name>System Verilog for IntelliJ</name>
+    <name>System Verilog</name>
     <vendor>Roger Barton</vendor>
 
     <!-- Product and plugin compatibility requirements -->
@@ -8,22 +8,15 @@
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="com.github.rogerbarton.intellijsv.services.MyApplicationService"/>
-        <projectService serviceImplementation="com.github.rogerbarton.intellijsv.services.MyProjectService"/>
 
         <fileType name="System Verilog File" implementationClass="com.github.rogerbarton.intellijsv.SvFileType"
                   fieldName="INSTANCE" language="Sv" extensions="sv"/>
 
         <lang.parserDefinition language="Sv"
-                               implementationClass="com.github.rogerbarton.intellijsv.psi.SvParserDefinition"/>
+                               implementationClass="com.github.rogerbarton.intellijsv.core.psi.SvParserDefinition"/>
 
         <lang.syntaxHighlighterFactory language="Sv"
                                        implementationClass="com.github.rogerbarton.intellijsv.SvSyntaxHighlighterFactory"/>
-        <colorSettingsPage implementation="com.github.rogerbarton.intellijsv.SvColorSettingsPage"/>
+        <colorSettingsPage implementation="com.github.rogerbarton.intellijsv.core.SvColorSettingsPage"/>
     </extensions>
-
-    <applicationListeners>
-        <listener class="com.github.rogerbarton.intellijsv.listeners.MyProjectManagerListener"
-                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
-    </applicationListeners>
 </idea-plugin>

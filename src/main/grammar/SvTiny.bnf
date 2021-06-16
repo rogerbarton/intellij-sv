@@ -1,5 +1,6 @@
 {
     parserClass="com.github.rogerbarton.intellijsv.parser.SvParser"
+    parserUtilClass="com.github.rogerbarton.intellijsv.parser.SvParserUtil"
 
     extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
 
@@ -9,11 +10,12 @@
     psiImplPackage="com.github.rogerbarton.intellijsv.psi.impl"
 
     elementTypeHolderClass="com.github.rogerbarton.intellijsv.psi.SvTypes"
-    elementTypeClass="com.github.rogerbarton.intellijsv.psi.SvElementType"
-    tokenTypeClass="com.github.rogerbarton.intellijsv.psi.SvTokenType"
+    elementTypeClass="com.github.rogerbarton.intellijsv.core.psi.SvElementType"
+    tokenTypeClass="com.github.rogerbarton.intellijsv.core.psi.SvTokenType"
 
     tokens = [
-        space = 'regexp:\s+'
+        WHITE_SPACE = 'regexp:[\s\r\n]+'
+        space = 'regexp:[\s\r\n]+'
         simple_identifier = "regexp:[a-zA-Z_][a-zA-Z0-9_$]*"
         line_comment="regexp://.*"
         block_comment="regexp:/\*(.|\n)*\*/"

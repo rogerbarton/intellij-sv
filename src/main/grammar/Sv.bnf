@@ -9,25 +9,11 @@
     psiImplPackage="com.github.rogerbarton.intellijsv.psi.impl"
 
     elementTypeHolderClass="com.github.rogerbarton.intellijsv.psi.SvTypes"
-    elementTypeClass="com.github.rogerbarton.intellijsv.psi.SvElementType"
-    tokenTypeClass="com.github.rogerbarton.intellijsv.psi.SvTokenType"
+    elementTypeClass="com.github.rogerbarton.intellijsv.core.psi.SvElementType"
+    tokenTypeClass="com.github.rogerbarton.intellijsv.core.psi.SvTokenType"
 }
 
 // A.1.1 Library source text
-
-library_text ::= { library_description }
-
-library_description ::=
-    library_declaration
-    | include_statement
-    | config_declaration
-    | ";"
-
-library_declaration ::= "library" library_identifier
-    file_path_spec { "," file_path_spec }
-    [ "-incdir" file_path_spec { "," file_path_spec } ] ";"
-
-include_statement ::= "include" file_path_spec ";"
 
 // A.1.2 SystemVerilog source text
 
@@ -36,14 +22,7 @@ source_text ::= [ timeunits_declaration ] { description }
 description ::=
 
       module_declaration
-    | udp_declaration
-    | interface_declaration
-    | program_declaration
-    | package_declaration
-    | { attribute_instance } package_item
-    | { attribute_instance } bind_directive
-    | config_declaration
-    
+
 module_nonansi_header ::=
     
     { attribute_instance } module_keyword [ lifetime ] module_identifier
@@ -56,82 +35,16 @@ module_ansi_header ::=
     
 module_declaration ::= 
 
-    module_nonansi_header [ timeunits_declaration ] { module_item } "endmodule" [ ":" module_identifier ]
-    | module_ansi_header [ timeunits_declaration ] { non_port_module_item } "endmodule" [ ":" module_identifier ]
-    | { attribute_instance } module_keyword [ lifetime ] module_identifier "( .* ) ;" [ timeunits_declaration ] { module_item } "endmodule" [ ":" module_identifier ]
+      module_nonansi_header [ timeunits_declaration ] { module_item }
+      "endmodule" [ ":" module_identifier ]
+    | module_ansi_header [ timeunits_declaration ] { non_port_module_item }
+      "endmodule" [ ":" module_identifier ]
+    | { attribute_instance } module_keyword [ lifetime ] module_identifier "( .* ) ;" [ timeunits_declaration ] { module_item }
+      "endmodule" [ ":" module_identifier ]
     | "extern" module_nonansi_header
     | "extern" module_ansi_header
     
 module_keyword ::= "module" | "macromodule"
-
-interface_declaration ::= interface_nonansi_header [ timeunits_declaration ] { interface_item } "endinterface" [ ":" interface_identifier ]
-    
-    | interface_ansi_header [ timeunits_declaration ] { non_port_interface_item } "endinterface" [ ":" interface_identifier ]
-    | { attribute_instance } "interface" interface_identifier "( .* ) ;" [ timeunits_declaration ] { interface_item } "endinterface" [ ":" interface_identifier ]
-    | "extern" interface_nonansi_header
-    | "extern" interface_ansi_header
-    
-interface_nonansi_header ::=
-
-    { attribute_instance } "interface" [ lifetime ] interface_identifier { package_import_declaration } [ parameter_port_list ] list_of_ports ";"
-    
-interface_ansi_header ::=
-
-    {attribute_instance } "interface" [ lifetime ] interface_identifier { package_import_declaration } [ parameter_port_list ] [ list_of_port_declarations ] ";"
-    
-program_declaration ::= 
-    
-    program_nonansi_header [ timeunits_declaration ] { program_item } "endprogram" [ ":" program_identifier ]
-    | program_ansi_header [ timeunits_declaration ] { non_port_program_item } "endprogram" [ ":" program_identifier ]
-    | { attribute_instance } "program" program_identifier "( .* ) ;" [ timeunits_declaration ] { program_item } "endprogram" [ ":" program_identifier ]
-    | "extern" program_nonansi_header
-    | "extern" program_ansi_header
-    
-program_nonansi_header ::=
-
-    { attribute_instance } "program" [ lifetime ] program_identifier{ package_import_declaration } [ parameter_port_list ] list_of_ports ";"
-
-program_ansi_header ::=
-
-    { attribute_instance } "program" [ lifetime ] program_identifier{ package_import_declaration } [
-    parameter_port_list ] [ list_of_port_declarations ] ";"
-
-checker_declaration ::=
-
-    "checker" checker_identifier [ "(" [ checker_port_list ] ")" ] ";"
-    { { attribute_instance } checker_or_generate_item } "endchecker"
-    [ ":" checker_identifier ]
-   
-class_declaration ::=
-   
-    [ "virtual" ] "class" [ lifetime ] class_identifier [ parameter_port_list ]
-    [ "extends" class_type [ "(" list_of_arguments ")" ] ]
-    [ "implements" interface_class_type { "," interface_class_type } ] ";"
-    { class_item } "endclass" [ ":" class_identifier]
-
-interface_class_type ::= ps_class_identifier [ parameter_value_assignment ]
-
-interface_class_declaration ::=
-
-    "interface" "class" class_identifier [ parameter_port_list ]
-    [ "extends" interface_class_type { "," interface_class_type } ] ";"
-    { interface_class_item } "endclass" [ ":" class_identifier]
-
-interface_class_item ::=
-
-      type_declaration
-    | { attribute_instance } interface_class_method
-    | local_parameter_declaration ";"
-    | parameter_declaration ";"
-    | ";"
-
-interface_class_method ::= "pure" "virtual" method_prototype ";"
-
-package_declaration ::=
-   
-    { attribute_instance } "package" [ lifetime ] package_identifier ";"
-    [ timeunits_declaration ] { { attribute_instance } package_item }
-    "endpackage" [ ":" package_identifier ]
 
 timeunits_declaration ::=
 
@@ -172,8 +85,8 @@ port_declaration ::=
 
 port ::=
 
-    [ port_expression ]
-    | "." port_identifier "(" [ port_expression ] ")"
+      "." port_identifier "(" [ port_expression ] ")"
+    | [ port_expression ]
 
 port_expression ::=
 
@@ -188,14 +101,14 @@ net_port_header ::= [ port_direction ] net_port_type
 
 variable_port_header ::= [ port_direction ] variable_port_type
 
-interface_port_header ::=
-
-      interface_identifier [ "." modport_identifier ]
-    | "interface" [ "." modport_identifier ]
+//interface_port_header ::=
+//
+//      interface_identifier [ "." modport_identifier ]
+//    | "interface" [ "." modport_identifier ]
 
 ansi_port_declaration ::=
 
-      [ net_port_header | interface_port_header ] port_identifier { unpacked_dimension } [ "=" constant_expression ]
+      [ net_port_header /*| interface_port_header*/ ] port_identifier { unpacked_dimension } [ "=" constant_expression ]
     | [ variable_port_header ] port_identifier { variable_dimension } [ "=" constant_expression ]
     | [ port_direction ] "." port_identifier "(" [ expression ] ")"
 
@@ -213,10 +126,10 @@ finish_number ::= "0" | "1" | "2"
 module_common_item ::=
 
       module_or_generate_item_declaration
-    | interface_instantiation
-    | program_instantiation
+//    | interface_instantiation
+//    | program_instantiation
     | assertion_item
-    | bind_directive
+//    | bind_directive
     | continuous_assign
     | net_alias
     | initial_construct
@@ -231,8 +144,8 @@ module_item ::= port_declaration ";" | non_port_module_item
 module_or_generate_item ::=
 
       { attribute_instance } parameter_override
-    | { attribute_instance } gate_instantiation
-    | { attribute_instance } udp_instantiation
+//    | { attribute_instance } gate_instantiation
+//    | { attribute_instance } udp_instantiation
     | { attribute_instance } module_instantiation
     | { attribute_instance } module_common_item
 
@@ -240,8 +153,8 @@ module_or_generate_item_declaration ::=
 
       package_or_generate_item_declaration
     | genvar_declaration
-    | clocking_declaration
-    | "default" "clocking" clocking_identifier ";"
+//    | clocking_declaration
+//    | "default" "clocking" clocking_identifier ";"
     | "default" "disable iff" expression_or_dist ";"
 
 non_port_module_item ::=
@@ -250,276 +163,27 @@ non_port_module_item ::=
     | module_or_generate_item
     | specify_block
     | { attribute_instance } specparam_declaration
-    | program_declaration
+//    | program_declaration
     | module_declaration
-    | interface_declaration
+//    | interface_declaration
     | timeunits_declaration
 
 parameter_override ::= "defparam" list_of_defparam_assignments ";"
 
-bind_directive ::=
 
-    "bind" bind_target_scope
-    [":" bind_target_instance_list] bind_instantiation ";"
-    | "bind" bind_target_instance bind_instantiation ";"
-
-bind_target_scope ::= module_identifier | interface_identifier
-
-bind_target_instance ::= hierarchical_identifier constant_bit_select
-
-bind_target_instance_list ::= bind_target_instance { "," bind_target_instance }
-
-bind_instantiation ::=
-
-      program_instantiation
-    | module_instantiation
-    | interface_instantiation
-    | checker_instantiation
-
-// A.1.5 Configuration source text 
-
-config_declaration ::=
-
-    "config" config_identifier ";" { local_parameter_declaration ";" } design_statement
-    { config_rule_statement } "endconfig" [ ":" config_identifier ]
-
-design_statement ::= "design" { [ library_identifier "." ] cell_identifier } ";"
-
-config_rule_statement ::=
-
-      default_clause liblist_clause ";"
-    | inst_clause liblist_clause ";"
-    | inst_clause use_clause ";"
-    | cell_clause liblist_clause ";"
-    | cell_clause use_clause ";"
-
-default_clause ::= "default"
-
-inst_clause ::= "instance" inst_name
-
-inst_name ::= topmodule_identifier { "." instance_identifier }
-
-cell_clause ::= "cell" [ library_identifier "." ] cell_identifier
-
-liblist_clause ::= "liblist" {library_identifier}
-
-use_clause ::=
-
-      "use" [ library_identifier "." ] cell_identifier [ ": config" ]
-    | "use" named_parameter_assignment { "," named_parameter_assignment } [ ":" "config" ]
-    | "use" [ library_identifier "." ] cell_identifier named_parameter_assignment
-      { "," named_parameter_assignment } [ ":" "config" ]
+// A.1.5 Configuration source text
 
 // A.1.6 Interface items 
 
-interface_or_generate_item ::=
-   
-      { attribute_instance } module_common_item
-    | { attribute_instance } extern_tf_declaration
-
-extern_tf_declaration ::= "extern" method_prototype ";" | "extern" "forkjoin" task_prototype ";"
-
-interface_item ::= port_declaration ";" | non_port_interface_item
-
-non_port_interface_item ::=
-
-      generate_region
-    | interface_or_generate_item
-    | program_declaration
-    | modport_declaration
-    | interface_declaration
-    | timeunits_declaration
-
-// A.1.7 Program items 
-
-program_item ::= port_declaration ";" | non_port_program_item
-
-non_port_program_item ::=
-
-      { attribute_instance } continuous_assign
-    | { attribute_instance } module_or_generate_item_declaration
-    | { attribute_instance } initial_construct
-    | { attribute_instance } final_construct
-    | { attribute_instance } concurrent_assertion_item
-    | timeunits_declaration
-    | program_generate_item
-
-program_generate_item ::=
-
-      loop_generate_construct
-    | conditional_generate_construct
-    | generate_region
-    | elaboration_system_task
+// A.1.7 Program items
 
 // A.1.8 Checker items 
 
-checker_port_list ::= checker_port_item {"," checker_port_item}
-
-checker_port_item ::=
-   
-    { attribute_instance } [ checker_port_direction ]
-    property_formal_type formal_port_identifier{variable_dimension} [ "=" property_actual_arg ]
-
-checker_port_direction ::= "input" | "output"
-
-checker_or_generate_item ::=
-
-      checker_or_generate_item_declaration
-    | initial_construct
-    | always_construct
-    | final_construct
-    | assertion_item
-    | continuous_assign
-    | checker_generate_item
-
-checker_or_generate_item_declaration ::=
-
-    [ "rand" ] data_declaration
-    | function_declaration
-    | checker_declaration
-    | assertion_item_declaration
-    | covergroup_declaration
-    | genvar_declaration
-    | clocking_declaration
-    | "default" "clocking" clocking_identifier ";"
-    | "default" "disable" "iff" expression_or_dist ";"
-    | ";"
-
-checker_generate_item ::=
-
-      loop_generate_construct
-    | conditional_generate_construct
-    | generate_region
-    | elaboration_system_task
-
-// A.1.9 Class items 
-
-class_item ::=
-   
-      { attribute_instance } class_property
-    | { attribute_instance } class_method
-    | { attribute_instance } class_constraint
-    | { attribute_instance } class_declaration
-    | { attribute_instance } covergroup_declaration
-    | local_parameter_declaration ";"
-    | parameter_declaration ";"
-    | ";"
-
-class_property ::=
-
-    { property_qualifier } data_declaration
-    | "const" { class_item_qualifier } data_type const_identifier
-    [ "=" constant_expression ] ";"
-
-class_method ::=
-   
-      { method_qualifier } task_declaration
-    | { method_qualifier } function_declaration
-    | "pure" "virtual" { class_item_qualifier } method_prototype ";"
-    | "extern" { method_qualifier } method_prototype ";"
-    | { method_qualifier } class_constructor_declaration
-    | "extern" { method_qualifier } class_constructor_prototype
-
-class_constructor_prototype ::= "function new" [ "(" [ tf_port_list ] ")" ] ";"
-
-class_constraint ::= constraint_prototype | constraint_declaration
-
-class_item_qualifier ::= "static" | "protected" | "local"
-
-property_qualifier ::= random_qualifier | class_item_qualifier
-
-random_qualifier ::= "rand" | "randc"
-   
-method_qualifier ::= [ "pure" ] "virtual" | class_item_qualifier
-
-method_prototype ::= task_prototype | function_prototype
-
-class_constructor_declaration ::=
-
-    "function" [ class_scope ] "new" [ "(" [ tf_port_list ] ")" ] ";"
-    { block_item_declaration }
-    [ "super . new" [ "(" list_of_arguments ")" ] ";" ]
-    { function_statement_or_null } "endfunction" [ ": new" ]
+// A.1.9 Class items
 
 // A.1.10 Constraints
 
-constraint_declaration ::= [ "static" ] "constraint" constraint_identifier constraint_block
-
-constraint_block ::= "{" { constraint_block_item } "}"
-
-constraint_block_item ::=
-
-      "solve" solve_before_list "before" solve_before_list ";"
-    | constraint_expression
-
-solve_before_list ::= constraint_primary { "," constraint_primary }
-
-constraint_primary ::= [ implicit_class_handle "." | class_scope ] hierarchical_identifier select
-
-constraint_expression ::=
-
-    [ "soft" ] expression_or_dist ";"
-    | uniqueness_constraint ";"
-    | expression "-->" constraint_set
-    | "if" "(" expression ")" constraint_set [ "else"
-    constraint_set ]
-    | "foreach (" ps_or_hierarchical_array_identifier "["
-    loop_variables "]" ")" constraint_set
-    | "disable" "soft" constraint_primary ";"
-
-uniqueness_constraint ::= "unique" "{" open_range_list "}"
-
-constraint_set ::= constraint_expression | "{" { constraint_expression } "}"
-
-dist_list ::= dist_item { "," dist_item }
-
-dist_item ::= value_range [ dist_weight ]
-
-dist_weight ::= ":=" expression | ":/" expression
-
-constraint_prototype ::= [constraint_prototype_qualifier] [ "static" ] "constraint" constraint_identifier ";"
-
-constraint_prototype_qualifier ::= "extern" | "pure"
-
-extern_constraint_declaration ::= [ "static" ] "constraint" class_scope constraint_identifier constraint_block
-
-identifier_list ::= identifier { "," identifier }
-
 // A.1.11 Package items
-
-package_item ::=
-
-      package_or_generate_item_declaration
-    | anonymous_program
-    | package_export_declaration
-    | timeunits_declaration
-
-package_or_generate_item_declaration ::=
-
-      net_declaration
-    | data_declaration
-    | task_declaration
-    | function_declaration
-    | checker_declaration
-    | dpi_import_export
-    | extern_constraint_declaration | class_declaration
-    | class_constructor_declaration
-    | local_parameter_declaration ";"
-    | parameter_declaration ";"
-    | covergroup_declaration
-    | assertion_item_declaration
-    | ";"
-
-anonymous_program ::= "program ;" { anonymous_program_item } "endprogram"
-
-anonymous_program_item ::=
-
-      task_declaration
-    | function_declaration
-    | class_declaration
-    | covergroup_declaration
-    | class_constructor_declaration
-    | ";"
 
 //A.2 Declarations
 
@@ -807,68 +471,9 @@ queue_dimension ::= "[ $" [ ":" constant_expression ] "]"
 
 unsized_dimension ::= "[ ]"
 
-// A.2.6 Function declarations 
+// A.2.6 Function declarations
 
-function_data_type_or_implicit ::= data_type_or_void | implicit_data_type
-
-function_declaration ::= "function" [ lifetime ] function_body_declaration
-
-function_body_declaration ::=
-
-      function_data_type_or_implicit [ interface_identifier "." | class_scope ] function_identifier ";"
-      { tf_item_declaration } { function_statement_or_null } "endfunction" [ ":" function_identifier ]
-
-    | function_data_type_or_implicit [ interface_identifier "." | class_scope ] function_identifier "(" [ tf_port_list ] ")" ";"
-      { block_item_declaration } { function_statement_or_null } "endfunction" [ ":" function_identifier ]
-
-function_prototype ::= "function" data_type_or_void function_identifier [ "(" [ tf_port_list ] ")" ]
-
-dpi_import_export ::=
-
-      "import" dpi_spec_string [ dpi_function_import_property ] [ c_identifier "=" ] dpi_function_proto ";"
-    | "import" dpi_spec_string [ dpi_task_import_property ] [ c_identifier "=" ] dpi_task_proto ";"
-    | "export" dpi_spec_string [ c_identifier "=" ] "function" function_identifier ";"
-    | "export" dpi_spec_string [ c_identifier "=" ] "task" task_identifier ";"
-
-dpi_spec_string ::= "DPI-C" | "DPI"
-
-dpi_function_import_property ::= "context" | "pure"
-
-dpi_task_import_property ::= "context"
-
-dpi_function_proto ::= function_prototype
-
-dpi_task_proto ::= task_prototype
-
-// A.2.7 Task declarations 
-
-task_declaration ::= "task" [ lifetime ] task_body_declaration
-
-task_body_declaration ::=
-   
-      [ interface_identifier "." | class_scope ] task_identifier ";"
-      { tf_item_declaration } { statement_or_null } "endtask" [ ":" task_identifier ]
-
-    | [ interface_identifier "." | class_scope ] task_identifier "(" [ tf_port_list ] ") ;"
-      { block_item_declaration } { statement_or_null } "endtask" [ ":" task_identifier ]
-
-tf_item_declaration ::= block_item_declaration | tf_port_declaration
-
-tf_port_list ::= tf_port_item { "," tf_port_item }
-
-tf_port_item ::=
-   
-    { attribute_instance } [ tf_port_direction ] [ "var" ] data_type_or_implicit
-    [ port_identifier { variable_dimension } [ "=" expression ] ]
-
-tf_port_direction ::= port_direction | "const" "ref"
-
-tf_port_declaration ::=
-
-    { attribute_instance } tf_port_direction [ "var" ]
-    data_type_or_implicit list_of_tf_variable_identifiers ";"
-
-task_prototype ::= "task" task_identifier [ "(" [ tf_port_list ] ")" ]
+// A.2.7 Task declarations
 
 // A.2.8 Block item declarations 
 
@@ -879,29 +484,7 @@ block_item_declaration ::=
     | { attribute_instance } parameter_declaration ";"
     | { attribute_instance } let_declaration
 
-// A.2.9 Interface declarations 
-
-modport_declaration ::= "modport" modport_item { "," modport_item } ";"
-
-modport_item ::= modport_identifier "(" modport_ports_declaration { "," modport_ports_declaration } ")"
-
-modport_ports_declaration ::=
-
-      { attribute_instance } modport_simple_ports_declaration
-    | { attribute_instance } modport_tf_ports_declaration
-    | { attribute_instance } modport_clocking_declaration
-
-modport_clocking_declaration ::= "clocking" clocking_identifier
-
-modport_simple_ports_declaration ::= port_direction modport_simple_port { "," modport_simple_port }
-
-modport_simple_port ::= port_identifier | "." port_identifier "(" [ expression ] ")"
-
-modport_tf_ports_declaration ::= import_export modport_tf_port { "," modport_tf_port }
-
-modport_tf_port ::= method_prototype | tf_identifier
-
-import_export ::= "import" | "export"
+// A.2.9 Interface declarations
 
 // A.2.10 Assertion declarations 
 
@@ -1086,231 +669,11 @@ expression_or_dist ::= expression [ "dist" "{" dist_list "}" ]
 
 assertion_variable_declaration ::= var_data_type list_of_variable_decl_assignments ";"
 
-// A.2.11 Covergroup declarations 
-
-covergroup_declaration ::=
-
-    "covergroup" covergroup_identifier [ "(" [ tf_port_list ] ")" ] [ coverage_event ] ";"
-    { coverage_spec_or_option } "endgroup" [ ":" covergroup_identifier ]
-   
-coverage_spec_or_option ::=
-   
-      {attribute_instance} coverage_spec
-    | {attribute_instance} coverage_option ";"
-
-coverage_option ::=
-
-      "option."member_identifier "=" expression
-    | "type_option."member_identifier "=" constant_expression
-
-coverage_spec ::= cover_point | cover_cross
-coverage_event ::=
-
-      clocking_event
-    | "with" "function" "sample" "(" [ tf_port_list ] ")"
-    | "@@(" block_event_expression ")"
-
-block_event_expression ::=
-
-      block_event_expression "or" block_event_expression
-    | "begin" hierarchical_btf_identifier
-    | "end" hierarchical_btf_identifier
-
-hierarchical_btf_identifier ::=
-
-      hierarchical_tf_identifier
-    | hierarchical_block_identifier
-    | [ hierarchical_identifier"." | class_scope ] method_identifier
-
-cover_point ::=
-
-    [ [ data_type_or_implicit ] cover_point_identifier ":" ]
-    "coverpoint" expression [ "iff" "(" expression ")" ]
-    bins_or_empty
-   
-bins_or_empty ::=
-   
-      "{" {attribute_instance} { bins_or_options ";" } "}"
-    | ";"
-
-bins_or_options ::=
-
-      coverage_option
-    | [ "wildcard" ] bins_keyword bin_identifier [ "[" [ covergroup_expression ] "]" ] "=" "{"
-      covergroup_range_list "}" [ "with" "(" with_covergroup_expression ")" ] [ "iff" "(" expression ")" ]
-    | [ "wildcard" ] bins_keyword bin_identifier [ "[" [
-      covergroup_expression ] "]" ] "=" cover_point_identifier
-      "with" "(" with_covergroup_expression ")" [ "iff" "(" expression ")" ]
-    | [ "wildcard" ] bins_keyword bin_identifier [ "[" [
-      covergroup_expression ] "]" ] "=" set_covergroup_expression
-      [ "iff" "(" expression ")" ]
-    | [ "wildcard"] bins_keyword bin_identifier [ "[ ]" ]
-      "=" trans_list [ "iff" "(" expression ")" ]
-    | bins_keyword bin_identifier [ "[" [ covergroup_expression
-      ] "]" ] "=" "default" [ "iff" "(" expression ")" ]
-    | bins_keyword bin_identifier "=" "default" "sequence" [
-      "iff" "(" expression ")" ]
-
-bins_keyword::= "bins" | "illegal_bins" | "ignore_bins"
-
-trans_list ::= "(" trans_set ")" { "," "(" trans_set ")" }
-
-trans_set ::= trans_range_list { "=>" trans_range_list }
-
-trans_range_list ::=
-
-      trans_item
-    | trans_item "["* repeat_range "]"
-    | trans_item "[-->" repeat_range "]"
-    | trans_item "[=" repeat_range "]"
-
-trans_item ::= covergroup_range_list
-
-repeat_range ::= covergroup_expression | covergroup_expression ":" covergroup_expression
-
-cover_cross ::=
-
-    [ cross_identifier ":" ] "cross" list_of_cross_items [ "iff" "(" expression ")" ] cross_body
-
-list_of_cross_items ::= cross_item "," cross_item { "," cross_item }
-
-cross_item ::= cover_point_identifier | variable_identifier
-
-cross_body ::=
-
-      "{" { cross_body_item ";" } "}"
-    | ";"
-
-cross_body_item ::= function_declaration | bins_selection_or_option ";"
-
-bins_selection_or_option ::=
-
-      { attribute_instance } coverage_option
-    | { attribute_instance } bins_selection
-
-bins_selection ::=
-
-    bins_keyword bin_identifier "=" select_expression [ "iff" "(" expression ")" ]
-
-select_expression ::=
-
-      select_condition
-    | "!" select_condition
-    | select_expression "&&" select_expression
-    | select_expression "||" select_expression
-    | "(" select_expression ")"
-    | select_expression "with" "(" with_covergroup_expression ")" [ "matches" integer_covergroup_expression ]
-    | cross_identifier
-    | cross_set_expression [ "matches" integer_covergroup_expression ]
-
-select_condition ::= "binsof (" bins_expression ")" [ "intersect" "{" covergroup_range_list "}" ]
-
-bins_expression ::= variable_identifier | cover_point_identifier [ "." bin_identifier ]
-
-covergroup_range_list ::= covergroup_value_range { "," covergroup_value_range }
-
-covergroup_value_range ::=
-
-      covergroup_expression
-    | "[" covergroup_expression ":" covergroup_expression "]"
-
-with_covergroup_expression ::= covergroup_expression
-
-set_covergroup_expression ::= covergroup_expression
-
-integer_covergroup_expression ::= covergroup_expression
-
-cross_set_expression ::= covergroup_expression
-
-covergroup_expression ::= expression
+// A.2.11 Covergroup declarations
 
 // A.2.12 Let declarations
 
-let_declaration ::= "let" let_identifier [ "(" [ let_port_list ] ")" ] "=" expression ";"
-
-let_identifier ::= identifier
-
-let_port_list ::= let_port_item {"," let_port_item}
-
-let_port_item ::=
-
-    { attribute_instance } let_formal_type formal_port_identifier { variable_dimension } [ "=" expression ]
-
-let_formal_type ::= data_type_or_implicit | "untyped"
-   
-let_expression ::= [ package_scope ] let_identifier [ "(" [ let_list_of_arguments ] ")" ]
-
-let_list_of_arguments ::=
-
-    [ let_actual_arg ] {"," [ let_actual_arg ] } {"," "." identifier "(" [ let_actual_arg ] ")" }
-    | "." identifier "(" [ let_actual_arg ] ")" { "," "." identifier "(" [ let_actual_arg ] ")" }
-
-let_actual_arg ::= expression
-
 // A.3 Primitive instances
-
-// A.3.1 Primitive instantiation and instances 
-
-gate_instantiation ::=
-
-      cmos_switchtype [delay3] cmos_switch_instance { "," cmos_switch_instance } ";"
-    | enable_gatetype [drive_strength] [delay3] enable_gate_instance { "," enable_gate_instance } ";"
-    | mos_switchtype  [delay3] mos_switch_instance { "," mos_switch_instance } ";"
-    | n_input_gatetype  [drive_strength] [delay2] n_input_gate_instance { "," n_input_gate_instance } ";"
-    | n_output_gatetype [drive_strength] [delay2] n_output_gate_instance { "," n_output_gate_instance } ";"
-    | pass_en_switchtype [delay2] pass_enable_switch_instance { "," pass_enable_switch_instance } ";"
-    | pass_switchtype pass_switch_instance { "," pass_switch_instance } ";"
-    | "pulldown" [pulldown_strength] pull_gate_instance { "," pull_gate_instance } ";"
-    | "pullup" [pullup_strength] pull_gate_instance { "," pull_gate_instance } ";"
-
-cmos_switch_instance ::=    [ name_of_instance ] "(" output_terminal "," input_terminal "," ncontrol_terminal "," pcontrol_terminal ")"
-
-enable_gate_instance ::=    [ name_of_instance ] "(" output_terminal "," input_terminal "," enable_terminal ")"
-
-mos_switch_instance ::=     [ name_of_instance ] "(" output_terminal "," input_terminal "," enable_terminal ")"
-
-n_input_gate_instance ::=   [ name_of_instance ] "(" output_terminal "," input_terminal { "," input_terminal } ")"
-
-n_output_gate_instance ::=  [ name_of_instance ] "(" output_terminal { "," output_terminal } "," input_terminal ")"
-
-pass_switch_instance ::=    [ name_of_instance ] "(" inout_terminal "," inout_terminal ")"
-
-pass_enable_switch_instance ::= [ name_of_instance ] "(" inout_terminal "," inout_terminal "," enable_terminal ")"
-
-pull_gate_instance ::=      [ name_of_instance ] "(" output_terminal ")"
-
-// A.3.2 Primitive strengths 
-
-pulldown_strength ::=
-   
-      "(" strength0 "," strength1 ")"
-    | "(" strength1 "," strength0 ")"
-    | "(" strength0 ")"
-
-pullup_strength ::=
-
-      "(" strength0 "," strength1 ")"
-    | "(" strength1 "," strength0 ")"
-    | "(" strength1 ")"
-
-// A.3.3 Primitive terminals 
-
-enable_terminal ::= expression
-inout_terminal ::= net_lvalue
-input_terminal ::= expression
-ncontrol_terminal ::= expression
-output_terminal ::= net_lvalue
-pcontrol_terminal ::= expression
-
-// A.3.4 Primitive gate and switch types 
-
-cmos_switchtype ::= "cmos" | "rcmos"
-enable_gatetype ::= "bufif0" | "bufif1" | "notif0" | "notif1"
-mos_switchtype ::= "nmos" | "pmos" | "rnmos" | "rpmos"
-n_input_gatetype ::= "and" | "nand" | "or" | "nor" | "xor" | "xnor"
-n_output_gatetype ::= "buf" | "not"
-pass_en_switchtype ::= "tranif0" | "tranif1" | "rtranif1" | "rtranif0"
-pass_switchtype ::= "tran" | "rtran"
 
 //A.4 Instantiations 
 
@@ -1350,34 +713,10 @@ named_port_connection ::=
     | { attribute_instance } ".*"
    
 // A.4.1.2 Interface instantiation
-interface_instantiation ::=
-
-    interface_identifier [ parameter_value_assignment ]
-    hierarchical_instance { "," hierarchical_instance } ";"
    
 // A.4.1.3 Program instantiation
-program_instantiation ::=
-
-    program_identifier [ parameter_value_assignment ]
-    hierarchical_instance { "," hierarchical_instance } ";"
    
 // A.4.1.4 Checker instantiation
-checker_instantiation ::=
-
-    ps_checker_identifier name_of_instance "("
-    [list_of_checker_port_connections] ")" ";"
-
-list_of_checker_port_connections ::=
-
-    ordered_checker_port_connection { "," ordered_checker_port_connection }
-    | named_checker_port_connection { "," named_checker_port_connection }
-
-ordered_checker_port_connection ::= { attribute_instance } [ property_actual_arg ]
-
-named_checker_port_connection ::=
-
-    { attribute_instance } "." formal_port_identifier [ "(" [
-    property_actual_arg ] ")" ] | { attribute_instance } "."*
 
 // A.4.2 Generated instantiation 
 
@@ -1414,80 +753,9 @@ generate_block ::=
     | [ generate_block_identifier ":" ] "begin" [ ":" generate_block_identifier ]
       { generate_item } "end" [ ":" generate_block_identifier ]
 
-generate_item ::= module_or_generate_item | interface_or_generate_item | checker_or_generate_item
+generate_item ::= module_or_generate_item
 
-//A.5 UDP declaration and instantiation 
-
-// A.5.1 UDP declaration 
-
-udp_nonansi_declaration ::=
-
-    { attribute_instance } "primitive" udp_identifier "(" udp_port_list ") ;"
-
-udp_ansi_declaration ::=
-
-    { attribute_instance } "primitive" udp_identifier "(" udp_declaration_port_list ") ;"
-
-udp_declaration ::=
-    udp_nonansi_declaration udp_port_declaration {
-    udp_port_declaration } udp_body
-
-    "endprimitive" [ ":" udp_identifier ]
-    | udp_ansi_declaration udp_body
-   
-    "endprimitive" [ ":" udp_identifier ]
-    | "extern" udp_nonansi_declaration
-    | "extern" udp_ansi_declaration
-    | { attribute_instance } "primitive" udp_identifier "( .* ) ;"
-   
-    { udp_port_declaration } udp_body
-   
-    "endprimitive" [ ":" udp_identifier ]
-
-// A.5.2 UDP ports 
-
-udp_port_list ::= output_port_identifier ","
-    input_port_identifier { "," input_port_identifier }
-
-udp_declaration_port_list ::= udp_output_declaration ","
-    udp_input_declaration { "," udp_input_declaration }
-
-udp_port_declaration ::= udp_output_declaration ";"
-    | udp_input_declaration ";"
-    | udp_reg_declaration ";"
-
-udp_output_declaration ::=
-
-    { attribute_instance } "output" port_identifier
-    | { attribute_instance } "output" "reg" port_identifier [ "=" constant_expression ]
-
-udp_input_declaration ::= { attribute_instance } "input" list_of_udp_port_identifiers
-
-udp_reg_declaration ::= { attribute_instance } "reg" variable_identifier
-
-// A.5.3 UDP body 
-
-udp_body ::= combinational_body | sequential_body
-combinational_body ::= "table" combinational_entry { combinational_entry } "endtable"
-combinational_entry ::= level_input_list ":" output_symbol ";"
-sequential_body ::= [ udp_initial_statement ] "table" sequential_entry { sequential_entry } "endtable"
-udp_initial_statement ::= "initial" output_port_identifier "=" init_val ";"
-init_val ::= "1'b0" | "1'b1" | "1'bx" | "1'bX" | "1'B0" | "1'B1" | "1'Bx" | "1'BX" | "1" | "0"
-sequential_entry ::= seq_input_list ":" current_state ":" next_state ";"
-seq_input_list ::= level_input_list | edge_input_list
-level_input_list ::= level_symbol { level_symbol }
-edge_input_list ::= { level_symbol } edge_indicator { level_symbol }
-edge_indicator ::= "(" level_symbol level_symbol ")" | edge_symbol
-current_state ::= level_symbol
-next_state ::= output_symbol | "-"
-output_symbol ::= "0" | "1" | "x" | "X"
-level_symbol ::= "0" | "1" | "x" | "X" | "?" | "b" | "B"
-edge_symbol ::= "r" | "R" | "f" | "F" | "p" | "P" | "n" | "N" | ""*
-
-// A.5.4 UDP instantiation 
-
-udp_instantiation ::= udp_identifier [ drive_strength ] [ delay2 ] udp_instance { "," udp_instance } ";"
-udp_instance ::= [ name_of_instance ] "(" output_terminal "," input_terminal { "," input_terminal } ")"
+//A.5 UDP declaration and instantiation
 
 //A.6 Behavioral statements 
 
@@ -1798,7 +1066,6 @@ procedural_assertion_statement ::=
 
       concurrent_assertion_statement
     | immediate_assertion_statement
-    | checker_instantiation
 
 immediate_assertion_statement ::=
 

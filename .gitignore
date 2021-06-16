@@ -6,3 +6,5 @@ jflex-1.7.0-2.jar
 idea-flex.skeleton
 
 docs/
+
+src/main/gen/

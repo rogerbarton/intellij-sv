@@ -20,7 +20,7 @@ module empty3 #(
 endmodule
 
 module empty3 #() (
-    input logic clk_i
+    input logic clk_i = 1'b1
 );
 
 endmodule

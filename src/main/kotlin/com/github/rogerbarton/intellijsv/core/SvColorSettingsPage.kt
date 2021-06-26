@@ -1,11 +1,10 @@
-package com.github.rogerbarton.intellijsv
+package com.github.rogerbarton.intellijsv.core
 
+import com.github.rogerbarton.intellijsv.SvSyntaxHighlighter
 import com.intellij.openapi.options.colors.ColorSettingsPage
-import com.github.rogerbarton.intellijsv.core.SvIcons
 import com.intellij.openapi.fileTypes.SyntaxHighlighter
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.options.colors.AttributesDescriptor
-import com.github.rogerbarton.intellijsv.SvColorSettingsPage
 import com.intellij.openapi.options.colors.ColorDescriptor
 import javax.swing.Icon
 

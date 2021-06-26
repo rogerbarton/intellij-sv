@@ -1,6 +1,6 @@
 {
     parserClass="com.github.rogerbarton.intellijsv.parser.SvParser"
-    parserUtilClass="com.github.rogerbarton.intellijsv.parser.SvParserUtil"
+//    parserUtilClass="com.github.rogerbarton.intellijsv.parser.SvParserUtil"
 
     extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
 
@@ -922,7 +922,7 @@ cover_point_identifier ::= identifier
 cross_identifier ::= identifier
 dynamic_array_variable_identifier ::= variable_identifier
 enum_identifier ::= identifier
-escaped_identifier ::= '\' {any_printable_ASCII_character_except_white_space} white_space
+escaped_identifier ::= '\' string WHITE_SPACE
 formal_identifier ::= identifier
 formal_port_identifier ::= identifier
 function_identifier ::= identifier

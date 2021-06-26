@@ -1,9 +1,9 @@
-package com.github.rogerbarton.intellijsv.psi
+package com.github.rogerbarton.intellijsv.core.psi
 
 import com.intellij.lang.ParserDefinition
 import com.github.rogerbarton.intellijsv.SvLexerAdapter
+import com.github.rogerbarton.intellijsv.parser.SvParser
 import com.intellij.psi.tree.TokenSet
-import com.github.rogerbarton.intellijsv.psi.SvParserDefinition
 import com.intellij.lang.ASTNode
 import com.intellij.lang.PsiParser
 import com.intellij.psi.tree.IFileElementType

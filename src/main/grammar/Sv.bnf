@@ -71,24 +71,38 @@
 
 // A.1.2 SystemVerilog source text
 
-source_text ::= [ timeunits_declaration * ] module_declaration *
+source_text ::= [ (timeunits_declaration ';' )* ] module_declaration *
 
-module_ansi_header ::= IDENTIFIER [ parameter_port_list ] [ list_of_port_declarations ] ';'
 
 module_declaration ::= module_definition | module_extern
 
 module_definition ::=
 
-    module module_ansi_header [ timeunits_declaration * ]
+    module module_ansi_header ';' [ (timeunits_declaration ';')* ]
     // non_port_module_item *
-    endmodule [ ':' IDENTIFIER ]
+    endmodule [ ':' IDENTIFIER ] {
+    pin=1
+    recoverWhile = module_definition_recover
+    }
 
-module_extern ::= extern module module_ansi_header
+private module_definition_recover ::= !(module | extern)
+
+module_extern ::= extern module module_ansi_header ';' {
+    pin = 2
+}
+
+module_ansi_header ::= IDENTIFIER [ parameter_port_list ] [ list_of_port_declarations ] {
+    recoverWhile = statement_recover
+}
+
+private statement_recover ::= !';'
 
 timeunits_declaration ::=
 
-      timeunit time_literal [ '/' time_literal ] ';'
-    | timeprecision time_literal ';'
+      timeunit time_literal [ '/' time_literal ]
+    | timeprecision time_literal {
+    recoverWhile = statement_recover
+}
 
 // A.1.3 Module parameters and ports
 

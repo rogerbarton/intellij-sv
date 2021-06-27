@@ -140,7 +140,7 @@ port ::=
 port_expression ::=
 
       port_reference
-    | '{' port_reference { ',' port_reference } '}'
+    | '{' port_reference ( ',' port_reference ) * '}'
 
 port_reference ::= IDENTIFIER constant_select
 
@@ -246,7 +246,7 @@ enum_name_declaration ::= IDENTIFIER [ '[' integral_number [ ':' integral_number
 
 class_scope ::= class_type '::'
 
-class_type ::= IDENTIFIER [ parameter_value_assignment ] { '::' IDENTIFIER [ parameter_value_assignment ] }
+class_type ::= IDENTIFIER [ parameter_value_assignment ] ( '::' IDENTIFIER [ parameter_value_assignment ] ) *
 
 integer_type ::= integer_vector_type | integer_atom_type
 
@@ -260,7 +260,6 @@ non_integer_type ::= shortreal | real | realtime
 net_port_type ::=
 
       data_type_or_implicit
-    | IDENTIFIER
 
 variable_port_type ::= var_data_type
 
@@ -268,11 +267,11 @@ var_data_type ::= data_type | var data_type_or_implicit
 
 signing ::= signed | unsigned
 
-simple_type ::= integer_type | non_integer_type | IDENTIFIER | IDENTIFIER
+simple_type ::= integer_type | non_integer_type | IDENTIFIER
 
 struct_union_member ::=
 
-    [random_qualifier] data_type_or_void
+    data_type_or_void
     list_of_variable_decl_assignments ';'
 
 data_type_or_void ::= data_type | void
@@ -287,51 +286,29 @@ type_reference ::= type '(' expression ')' | type '(' data_type ')'
 
 // A.2.3 Declaration lists
 
-list_of_defparam_assignments ::= defparam_assignment { ',' defparam_assignment }
+list_of_defparam_assignments ::= defparam_assignment ( ',' defparam_assignment ) *
 
-IDENTIFIERs ::= IDENTIFIER { ',' IDENTIFIER }
-
-IDENTIFIERs ::= IDENTIFIER { unpacked_dimension }{ ',' IDENTIFIER { unpacked_dimension } }
-
-list_of_net_decl_assignments ::= net_decl_assignment { ',' net_decl_assignment }
+list_of_net_decl_assignments ::= net_decl_assignment ( ',' net_decl_assignment ) *
 
 list_of_param_assignments ::= param_assignment ( ',' param_assignment ) *
 
-IDENTIFIERs ::= IDENTIFIER { unpacked_dimension }{ ',' IDENTIFIER { unpacked_dimension } }
+list_of_specparam_assignments ::= specparam_assignment ( ',' specparam_assignment ) *
 
-IDENTIFIERs ::= IDENTIFIER { ',' IDENTIFIER }
+list_of_type_assignments ::= type_assignment ( ',' type_assignment ) *
 
-list_of_specparam_assignments ::= specparam_assignment { ',' specparam_assignment }
-
-IDENTIFIERs ::= IDENTIFIER { variable_dimension } [ '=' expression ]{ ',' IDENTIFIER { variable_dimension } [ '=' expression ] }
-
-list_of_type_assignments ::= type_assignment { ',' type_assignment }
-
-list_of_variable_decl_assignments ::= variable_decl_assignment { ',' variable_decl_assignment }
-
-IDENTIFIERs ::= IDENTIFIER { variable_dimension }{ ',' IDENTIFIER { variable_dimension } }
-
-IDENTIFIERs ::=
-
-    IDENTIFIER { variable_dimension } [ '=' constant_expression ]
-    { ',' IDENTIFIER { variable_dimension } [ '=' constant_expression ] }
+list_of_variable_decl_assignments ::= variable_decl_assignment ( ',' variable_decl_assignment ) *
 
 // A.2.4 Declaration assignments
 
 defparam_assignment ::= IDENTIFIER '=' constant_mintypmax_expression
 
-net_decl_assignment ::= IDENTIFIER { unpacked_dimension } [ '=' expression ]
+net_decl_assignment ::= IDENTIFIER ( unpacked_dimension ) * [ '=' expression ]
 
 param_assignment ::= IDENTIFIER ( unpacked_dimension ) *  // [ '=' constant_param_expression ]
 
-specparam_assignment ::= IDENTIFIER '=' constant_mintypmax_expression     | pulse_control_specparam
+specparam_assignment ::= IDENTIFIER '=' constant_mintypmax_expression
 
 type_assignment ::= IDENTIFIER [ '=' data_type ]
-
-pulse_control_specparam ::=
-
-      "PATHPULSE$" '=' '(' reject_limit_value [ ',' error_limit_value ] ')'
-    | "PATHPULSE$"specify_input_terminal_descriptor"$"specify_output_terminal_descriptor '= (' reject_limit_value [ ',' error_limit_value ] ')'
 
 error_limit_value ::= limit_value
 
@@ -341,8 +318,8 @@ limit_value ::= constant_mintypmax_expression
 
 variable_decl_assignment ::=
 
-      IDENTIFIER { variable_dimension } [ '=' expression ]
-    | IDENTIFIER unsized_dimension { variable_dimension } [ '=' dynamic_array_new ]
+      IDENTIFIER ( variable_dimension ) * [ '=' expression ]
+    | IDENTIFIER unsized_dimension ( variable_dimension ) * [ '=' dynamic_array_new ]
     | IDENTIFIER [ '=' class_new ]
 
 class_new ::=
@@ -390,17 +367,16 @@ unsized_dimension ::= '[' ']'
 
 // A.2.10 Assertion declarations
 
-sequence_method_call ::= sequence_instance '.' IDENTIFIER
-
-sequence_instance ::= IDENTIFIER [ '(' [ sequence_list_of_arguments ] ')' ]
-
-sequence_list_of_arguments ::=
-
-    [sequence_actual_arg] { ',' [sequence_actual_arg] } { ',' '.' IDENTIFIER '(' [sequence_actual_arg] ')' }
-    | '.' IDENTIFIER '(' [sequence_actual_arg] ')' { ', .'
-    IDENTIFIER '(' [sequence_actual_arg] ')' }
-
-sequence_actual_arg ::= event_expression | sequence_expr
+//sequence_method_call ::= sequence_instance '.' IDENTIFIER
+//
+//sequence_instance ::= IDENTIFIER [ '(' [ sequence_list_of_arguments ] ')' ]
+//
+//sequence_list_of_arguments ::=
+//
+//      '.' IDENTIFIER '(' [sequence_actual_arg] ')' ( ',' '.' IDENTIFIER '(' [sequence_actual_arg] ')' ) *
+//    | [sequence_actual_arg] ( ',' [sequence_actual_arg] ) * ( ',' '.' IDENTIFIER '(' [sequence_actual_arg] ')' ) *
+//
+//sequence_actual_arg ::= event_expression | sequence_expr
 
 // A.2.11 Covergroup declarations
 
@@ -416,14 +392,14 @@ sequence_actual_arg ::= event_expression | sequence_expr
 module_instantiation ::=
 
     IDENTIFIER [ parameter_value_assignment ]
-    hierarchical_instance { ',' hierarchical_instance } ';'
+    hierarchical_instance ( ',' hierarchical_instance ) * ';'
 
 parameter_value_assignment ::= '#' '(' [ list_of_parameter_assignments ] ')'
 
 list_of_parameter_assignments ::=
 
-      ordered_parameter_assignment { ',' ordered_parameter_assignment }
-    | named_parameter_assignment { ',' named_parameter_assignment }
+      ordered_parameter_assignment ( ',' ordered_parameter_assignment ) *
+    | named_parameter_assignment ( ',' named_parameter_assignment ) *
 
 ordered_parameter_assignment ::= param_expression
 
@@ -431,12 +407,12 @@ named_parameter_assignment ::= '.' IDENTIFIER '(' [ param_expression ] ')'
 
 hierarchical_instance ::= name_of_instance '(' [ list_of_port_connections ] ')'
 
-name_of_instance ::= IDENTIFIER { unpacked_dimension }
+name_of_instance ::= IDENTIFIER ( unpacked_dimension ) *
 
 list_of_port_connections ::=
 
-      ordered_port_connection { ',' ordered_port_connection }
-    | named_port_connection { ',' named_port_connection }
+      named_port_connection ( ',' named_port_connection ) *
+    | ordered_port_connection ( ',' ordered_port_connection ) *
 
 ordered_port_connection ::= [ expression ]
 
@@ -468,13 +444,13 @@ assignment_operator ::=
     '=' | '+=' | '-=' | '*=' | '/=' | '%=' | '&=' |
     '|=' | '^=' | '<<=' | '>>=' | '<<<=' | '>>>='
 
-nonblocking_assignment ::= variable_lvalue '<=' [ delay_or_event_control ] expression
+nonblocking_assignment ::= variable_lvalue '<=' expression
 
 // A.6.3 Parallel and sequential blocks
 
 // A.6.4 Statements
 
-IDENTIFIER_list ::= IDENTIFIER { ',' IDENTIFIER }
+IDENTIFIER_list ::= IDENTIFIER ( ',' IDENTIFIER ) *
 
 // A.6.5 Timing control statements
 
@@ -486,19 +462,19 @@ IDENTIFIER_list ::= IDENTIFIER { ',' IDENTIFIER }
 
 pattern ::=
 
-    '.' IDENTIFIER
-    | '.'*
+      '.' IDENTIFIER
+    | '.*'
     | constant_expression
     | tagged IDENTIFIER [ pattern ]
-    | "'{" pattern { ',' pattern } '}'
-    | "'{" IDENTIFIER ':' pattern { ',' IDENTIFIER ':' pattern } '}'
+    | "'" '{' pattern ( ',' pattern ) *  '}'
+    | "'" '{' IDENTIFIER ':' pattern ( ',' IDENTIFIER ':' pattern ) * '}'
 
 assignment_pattern ::=
 
-    "'{" expression { ',' expression } '}'
-    | "'{" structure_pattern_key ':' expression { ',' structure_pattern_key ':' expression } '}'
-    | "'{" array_pattern_key ':' expression { ',' array_pattern_key ':' expression } '}'
-    | "'{" constant_expression '{' expression { ',' expression } '}' '}'
+      "'" '{' expression ( ',' expression ) * '}'
+    | "'" '{' structure_pattern_key ':' expression ( ',' structure_pattern_key ':' expression ) * '}'
+    | "'" '{' array_pattern_key ':' expression ( ',' array_pattern_key ':' expression ) * '}'
+    | "'" '{' constant_expression '{' expression ( ',' expression ) * '}' '}'
 
 structure_pattern_key ::= IDENTIFIER | assignment_pattern_key
 
@@ -511,7 +487,6 @@ assignment_pattern_expression ::= [ assignment_pattern_expression_type ] assignm
 assignment_pattern_expression_type ::=
 
       IDENTIFIER
-    | IDENTIFIER
     | integer_atom_type
     | type_reference
 
@@ -519,11 +494,11 @@ constant_assignment_pattern_expression ::= assignment_pattern_expression
 
 assignment_pattern_net_lvalue ::=
 
-    "'{" net_lvalue {',' net_lvalue } '}'
+    "'" '{' net_lvalue ( ',' net_lvalue ) * '}'
 
 assignment_pattern_variable_lvalue ::=
 
-    "'{" variable_lvalue {',' variable_lvalue } '}'
+    "'" '{' variable_lvalue ( ',' variable_lvalue ) * '}'
 
 // A.6.8 Looping statements
 
@@ -549,13 +524,13 @@ assignment_pattern_variable_lvalue ::=
 
 // A.8.1 Concatenations
 
-concatenation ::= '{' expression { ',' expression } '}'
+concatenation ::= '{' expression ( ',' expression ) * '}'
 
-constant_concatenation ::= '{' constant_expression { ',' constant_expression } '}'
+constant_concatenation ::= '{' constant_expression ( ',' constant_expression ) * '}'
 
 constant_multiple_concatenation ::= '{' constant_expression constant_concatenation '}'
 
-module_path_concatenation ::= '{' module_path_expression { ',' module_path_expression } '}'
+module_path_concatenation ::= '{' module_path_expression ( ',' module_path_expression ) * '}'
 
 module_path_multiple_concatenation ::= '{' constant_expression module_path_concatenation '}'
 
@@ -567,7 +542,7 @@ stream_operator ::= '>>' | '<<'
 
 slice_size ::= simple_type | constant_expression
 
-stream_concatenation ::= '{' stream_expression { ',' stream_expression } '}'
+stream_concatenation ::= '{' stream_expression ( ',' stream_expression ) * '}'
 
 stream_expression ::= expression [ 'with' '[' array_range_expression ']' ]
 
@@ -590,7 +565,7 @@ system_tf_call ::=
 
       IDENTIFIER [ '(' list_of_arguments ')' ]
     | IDENTIFIER '(' data_type [ ',' expression ] ')'
-    | IDENTIFIER '(' expression { ',' [ expression ] } [ ',' [ clocking_event ] ] ')'
+//    | IDENTIFIER '(' expression ( ',' [ expression ] ) * [ ',' [ clocking_event ] ] ')'
 
 subroutine_call ::=
 
@@ -603,8 +578,8 @@ function_subroutine_call ::= subroutine_call
 
 list_of_arguments ::=
 
-      [ expression ] { ',' [ expression ] } { ',' '.' IDENTIFIER '(' [ expression ] ')' }
-    | '.' IDENTIFIER '(' [ expression ] ')' { ',' '.' IDENTIFIER '(' [ expression ] ')' }
+      '.' IDENTIFIER '(' [ expression ] ')' ( ',' '.' IDENTIFIER '(' [ expression ] ')' ) *
+    | [ expression ] ( ',' [ expression ] ) * ( ',' '.' IDENTIFIER '(' [ expression ] ')' ) *
 
 method_call ::= method_call_root '.' method_call_body
 
@@ -628,7 +603,7 @@ randomize_call ::=
 
     randomize
     [ '(' [ IDENTIFIER_list | null ] ')' ]
-    [ with [ '(' [ IDENTIFIER_list ] ')' ] constraint_block ]
+//    [ with [ '(' [ IDENTIFIER_list ] ')' ] constraint_block ]
 
 method_call_root ::= primary | implicit_class_handle
 
@@ -733,9 +708,7 @@ constant_primary ::=
       primary_literal
     | IDENTIFIER constant_select
     | IDENTIFIER [ '[' constant_range_expression ']' ]
-    | IDENTIFIER
-    | IDENTIFIER constant_select
-    | [ package_scope | class_scope ] IDENTIFIER
+    | [ class_scope ] IDENTIFIER
     | constant_concatenation [ '[' constant_range_expression ']' ]
     | constant_multiple_concatenation [ '[' constant_range_expression ']' ]
     | constant_function_call
@@ -758,7 +731,7 @@ module_path_primary ::=
 primary ::=
 
       primary_literal
-    | [ package_scope ] IDENTIFIER select
+    | IDENTIFIER select
     | empty_unpacked_array_concatenation
     | concatenation [ '[' range_expression ']' ]
     | multiple_concatenation [ '[' range_expression ']' ]
@@ -766,7 +739,8 @@ primary ::=
     | '(' mintypmax_expression ')'
     | cast
     | assignment_pattern_expression
-    | streaming_concatenation | sequence_method_call
+    | streaming_concatenation
+//    | sequence_method_call
     | this
     | "~$~"
     | null
@@ -794,22 +768,22 @@ time_unit ::= s | ms | us | ns | ps | fs
 
 implicit_class_handle ::= this | super | this '.' super
 
-bit_select ::= { '[' expression ']' }
+bit_select ::= ( '[' expression ']' ) *
 
 select ::=
 
-    [ { '.' IDENTIFIER bit_select } '.' IDENTIFIER ]
+    [ ( '.' IDENTIFIER bit_select ) * '.' IDENTIFIER ]
     bit_select [ '[' part_select_range ']' ]
 
 nonrange_select ::=
 
-    [ { '.' IDENTIFIER bit_select } '.' IDENTIFIER ] bit_select
+    [ ( '.' IDENTIFIER bit_select ) * '.' IDENTIFIER ] bit_select
 
-constant_bit_select ::= { '[' constant_expression ']' }
+constant_bit_select ::= ( '[' constant_expression ']' ) *
 
 constant_select ::=
 
-    [ { '.' IDENTIFIER constant_bit_select } '.'
+    [ ( '.' IDENTIFIER constant_bit_select ) * '.'
     IDENTIFIER ] constant_bit_select
     [ '[' constant_part_select_range ']' ]
 
@@ -824,19 +798,19 @@ cast ::= casting_type "'" '(' expression ')'
 net_lvalue ::=
 
       IDENTIFIER constant_select
-    | '{' net_lvalue { ',' net_lvalue } '}'
+    | '{' net_lvalue ( ',' net_lvalue ) * '}'
     | [ assignment_pattern_expression_type ] assignment_pattern_net_lvalue
 
 variable_lvalue ::=
 
-    [ implicit_class_handle '.' | package_scope ] IDENTIFIER select
-    | '{' variable_lvalue { ',' variable_lvalue } '}'
+    [ implicit_class_handle '.' ] IDENTIFIER select
+    | '{' variable_lvalue ( ',' variable_lvalue ) * '}'
     | [ assignment_pattern_expression_type ] assignment_pattern_variable_lvalue
     | streaming_concatenation
 
 nonrange_variable_lvalue ::=
 
-    [ implicit_class_handle '.' | package_scope ] IDENTIFIER nonrange_select
+    [ implicit_class_handle '.' ] IDENTIFIER nonrange_select
 
 // A.8.6 Operators
 
@@ -881,15 +855,15 @@ decimal_number ::=
 
       UNSIGNED_NUMBER
     | [ size ] decimal_base UNSIGNED_NUMBER
-    | [ size ] decimal_base x_digit { '_' }
-    | [ size ] decimal_base z_digit { '_' }
+    | [ size ] decimal_base x_digit '_' *
+    | [ size ] decimal_base z_digit '_' *
 
 binary_number ::= [ size ] binary_base BINARY_VALUE
 octal_number ::= [ size ] octal_base OCTAL_VALUE
 hex_number ::= [ size ] hex_base HEX_VALUE
 sign ::= '+' | '-'
 size ::= non_zero_UNSIGNED_NUMBER
-non_zero_UNSIGNED_NUMBER ::= non_zero_decimal_digit { '_' | decimal_digit}
+non_zero_UNSIGNED_NUMBER ::= non_zero_decimal_digit ( '_' | decimal_digit) *
 
 real_number ::= fixed_point_number | UNSIGNED_NUMBER [ '.' UNSIGNED_NUMBER ] exp [ sign ] UNSIGNED_NUMBER
 fixed_point_number ::= UNSIGNED_NUMBER '.' UNSIGNED_NUMBER
@@ -916,5 +890,5 @@ unbased_unsized_literal ::= "'0" | "'1" | "'" (x_digit | z_digit)
 comment ::= LINE_COMMENT | BLOCK_COMMENT
 //LINE_COMMENT ::= "//" comment_text n
 //BLOCK_COMMENT ::= "/"* comment_text "*/"
-//comment_text ::= { Any_ASCII_character }
+//comment_text ::= string
 

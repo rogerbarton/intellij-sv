@@ -8,7 +8,6 @@
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-
         <fileType name="System Verilog File" implementationClass="com.github.rogerbarton.intellijsv.SvFileType"
                   fieldName="INSTANCE" language="System Verilog" extensions="sv"/>
 
@@ -17,6 +16,7 @@
 
         <lang.syntaxHighlighterFactory language="System Verilog"
                                        implementationClass="com.github.rogerbarton.intellijsv.core.SvSyntaxHighlighterFactory"/>
-        <colorSettingsPage implementation="com.github.rogerbarton.intellijsv.core.SvColorSettingsPage"/>
+        <colorSettingsPage implementation="com.github.rogerbarton.intellijsv.ide.colors.SvColorSettingsPage"/>
+        <lang.commenter language="System Verilog" implementationClass="com.github.rogerbarton.intellijsv.ide.SvCommenter"/>
     </extensions>
 </idea-plugin>

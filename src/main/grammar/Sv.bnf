@@ -853,10 +853,10 @@ integral_number ::=
 
 decimal_number ::=
 
-      UNSIGNED_NUMBER
-    | [ size ] decimal_base UNSIGNED_NUMBER
-    | [ size ] decimal_base x_digit '_' *
-    | [ size ] decimal_base z_digit '_' *
+      [ size ] decimal_base UNSIGNED_NUMBER
+    | [ size ] decimal_base (x_digit '_') *
+    | [ size ] decimal_base (z_digit '_') *
+    | UNSIGNED_NUMBER
 
 binary_number ::= [ size ] binary_base BINARY_VALUE
 octal_number ::= [ size ] octal_base OCTAL_VALUE

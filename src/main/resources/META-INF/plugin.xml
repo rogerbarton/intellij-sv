@@ -10,13 +10,13 @@
     <extensions defaultExtensionNs="com.intellij">
 
         <fileType name="System Verilog File" implementationClass="com.github.rogerbarton.intellijsv.SvFileType"
-                  fieldName="INSTANCE" language="Sv" extensions="sv"/>
+                  fieldName="INSTANCE" language="System Verilog" extensions="sv"/>
 
-        <lang.parserDefinition language="Sv"
+        <lang.parserDefinition language="System Verilog"
                                implementationClass="com.github.rogerbarton.intellijsv.core.psi.SvParserDefinition"/>
 
-        <lang.syntaxHighlighterFactory language="Sv"
-                                       implementationClass="com.github.rogerbarton.intellijsv.SvSyntaxHighlighterFactory"/>
+        <lang.syntaxHighlighterFactory language="System Verilog"
+                                       implementationClass="com.github.rogerbarton.intellijsv.core.SvSyntaxHighlighterFactory"/>
         <colorSettingsPage implementation="com.github.rogerbarton.intellijsv.core.SvColorSettingsPage"/>
     </extensions>
 </idea-plugin>

@@ -12,4 +12,8 @@ class SvFileType : LanguageFileType(SvLanguage)
     override fun getDefaultExtension() = "sv"
 
     override fun getDescription() = "System Verilog HDL File"
+
+    companion object {
+        val INSTANCE: SvFileType = SvFileType()
+    }
 }

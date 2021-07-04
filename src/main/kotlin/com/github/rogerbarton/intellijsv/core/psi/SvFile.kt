@@ -8,7 +8,7 @@ import com.intellij.openapi.fileTypes.FileType
 
 class SvFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, SvLanguage)
 {
-    override fun getFileType(): FileType = SvFileType
+    override fun getFileType(): FileType = SvFileType()
 
     override fun toString() = "System Verilog File"
 }

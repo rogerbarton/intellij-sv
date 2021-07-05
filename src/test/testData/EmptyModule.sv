@@ -32,7 +32,6 @@ module empty3 #(
 
 endmodule
 
-
 module filter #(
     parameter int unsigned Order      = 127,   // Filter order
     parameter int unsigned AddrWidth  = 7      // Address width
@@ -44,3 +43,8 @@ module filter #(
   );
 
 endmodule : filter
+
+/* Block Comment */
+
+// Bad Character
+¬

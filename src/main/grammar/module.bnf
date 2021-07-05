@@ -14,8 +14,24 @@
     tokenTypeClass="com.github.rogerbarton.intellijsv.core.psi.SvTokenType"
 
     tokens = [
+        LBRACE      =  '{'
+        RBRACE      =  '}'
+        LBRACK      =  '['
+        RBRACK      =  ']'
+        LPAREN      =  '('
+        RPAREN      =  ')'
+
+        COLON       =  ':'
+        COLONCOLON  =  '::'
         SEMICOLON   =  ';'
+        COMMA       =  ','
+
+        EQ          =  '='
         DIV         =  '/'
+
+        SHA         =  '#'
+        DOT         =  '.'
+        UNDERSCORE  =  '_'
 
         WHITE_SPACE     = 'regexp:[\s\r\n]+'
         IDENTIFIER      = 'regexp:[a-zA-Z_][a-zA-Z0-9_$]*'
@@ -60,14 +76,12 @@ private TimeUnit ::= s | ms | us | ns | ps | fs
 
 ModuleDeclaration ::=
 
-    ModuleKeyword IDENTIFIER ModuleHeader ';'
+    module IDENTIFIER ModuleHeader ';'
     [ (TimeunitsDeclaration ';') * ]
 
     endmodule [ ':' IDENTIFIER ] {
     pin = 2
     }
-
-private ModuleKeyword ::= module | macromodule
 
 ModuleHeader ::=  [ ParameterPortDeclarationList ] [ PortDeclarationList ] {
     recoverWhile = Statement_recover

@@ -1,15 +1,15 @@
 {
-    parserClass="com.github.rogerbarton.intellijsv.parser.SvParser"
+    parserClass="com.github.rogerbarton.intellijsv.core.parser.SvParser"
 //    parserUtilClass="com.github.rogerbarton.intellijsv.parser.SvParserUtil"
 
     extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
 
     psiClassPrefix="Sv"
     psiImplClassSuffix="Impl"
-    psiPackage="com.github.rogerbarton.intellijsv.psi"
-    psiImplPackage="com.github.rogerbarton.intellijsv.psi.impl"
+    psiPackage="com.github.rogerbarton.intellijsv.core.psi"
+    psiImplPackage="com.github.rogerbarton.intellijsv.core.psi.impl"
 
-    elementTypeHolderClass="com.github.rogerbarton.intellijsv.psi.SvTypes"
+    elementTypeHolderClass="com.github.rogerbarton.intellijsv.core.psi.SvTypes"
     elementTypeClass="com.github.rogerbarton.intellijsv.core.psi.SvElementType"
     tokenTypeClass="com.github.rogerbarton.intellijsv.core.psi.SvTokenType"
 

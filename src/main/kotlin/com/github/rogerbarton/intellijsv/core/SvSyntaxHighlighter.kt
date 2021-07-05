@@ -3,7 +3,7 @@ package com.github.rogerbarton.intellijsv.core
 import com.github.rogerbarton.intellijsv.core.lexer.SvLexer
 import com.github.rogerbarton.intellijsv.core.psi.*
 import com.github.rogerbarton.intellijsv.ide.colors.SvColor
-import com.github.rogerbarton.intellijsv.psi.SvTypes.*
+import com.github.rogerbarton.intellijsv.core.psi.SvTypes.*
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase

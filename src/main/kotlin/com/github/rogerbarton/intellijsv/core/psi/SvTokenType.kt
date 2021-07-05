@@ -4,7 +4,7 @@ import com.github.rogerbarton.intellijsv.SvLanguage
 import org.jetbrains.annotations.NonNls
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
-import com.github.rogerbarton.intellijsv.psi.SvTypes.*
+import com.github.rogerbarton.intellijsv.core.psi.SvTypes.*
 
 class SvTokenType(@NonNls debugName: String) : IElementType(debugName, SvLanguage)
 {

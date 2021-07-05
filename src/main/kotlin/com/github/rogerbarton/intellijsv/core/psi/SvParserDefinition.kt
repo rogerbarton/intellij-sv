@@ -3,8 +3,7 @@ package com.github.rogerbarton.intellijsv.core.psi
 import com.github.rogerbarton.intellijsv.SvLanguage
 import com.github.rogerbarton.intellijsv.core.lexer.SvLexer
 import com.intellij.lang.ParserDefinition
-import com.github.rogerbarton.intellijsv.parser.SvParser
-import com.github.rogerbarton.intellijsv.psi.SvTypes
+import com.github.rogerbarton.intellijsv.core.parser.SvParser
 import com.intellij.psi.tree.TokenSet
 import com.intellij.lang.ASTNode
 import com.intellij.lang.PsiParser

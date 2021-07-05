@@ -5,29 +5,27 @@ module empty ();
 
 endmodule
 
-extern module ext1;
-
 module empty2 #() ();
 
 endmodule
 
-extern module ext2 #() ();
-
 module empty3 #(
-    parameter unsigned Order
+    parameter int Order = 1,
+    localparam int Id = 1,
 ) ();
 
 endmodule
 
 module empty3 #() (
-    input logic clk_i = 1'b1
+    input logic clk_i = 1'b0,
+    input logic clk_i = 1'hFF,
 );
 
 endmodule
 
 
 module empty3 #(
-    parameter unsigned Order
+    parameter int unsigned Order
 ) (
     input logic clk_i
 );
@@ -36,13 +34,13 @@ endmodule
 
 
 module filter #(
-//    parameter int unsigned Order      = 127, // Filter order
-//    parameter int unsigned AddrWidth  = 7   // Address width
+    parameter int unsigned Order      = 127,   // Filter order
+    parameter int unsigned AddrWidth  = 7      // Address width
   ) (
     input logic clk_i,                         // Clock signal
 
-    input logic                 data_in_req_i, // Req at input
-    input logic [DataWidth-1:0] data_in_i,     // Incoming data
+    input logic       data_in_req_i, // Req at input
+    input logic [1:0] data_in_i,     // Incoming data
   );
 
 endmodule : filter

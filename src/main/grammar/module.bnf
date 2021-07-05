@@ -1,0 +1,109 @@
+{
+    parserClass="com.github.rogerbarton.intellijsv.parser.SvParser"
+//    parserUtilClass="com.github.rogerbarton.intellijsv.parser.SvParserUtil"
+
+    extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+    psiClassPrefix="Sv"
+    psiImplClassSuffix="Impl"
+    psiPackage="com.github.rogerbarton.intellijsv.psi"
+    psiImplPackage="com.github.rogerbarton.intellijsv.psi.impl"
+
+    elementTypeHolderClass="com.github.rogerbarton.intellijsv.psi.SvTypes"
+    elementTypeClass="com.github.rogerbarton.intellijsv.core.psi.SvElementType"
+    tokenTypeClass="com.github.rogerbarton.intellijsv.core.psi.SvTokenType"
+
+    tokens = [
+        SEMICOLON   =  ';'
+        DIV         =  '/'
+
+        WHITE_SPACE     = 'regexp:[\s\r\n]+'
+        IDENTIFIER      = 'regexp:[a-zA-Z_][a-zA-Z0-9_$]*'
+        LINE_COMMENT    = 'regexp://.*'
+        BLOCK_COMMENT   = 'regexp:/\*(.|\n)*\*/'
+
+        // Literals
+        UNSIGNED_NUMBER = 'regexp:\d[_\d]*'
+        BINARY_NUMBER   = "regexp:\d[_\d]*'[sS]?[bB][01XxZz?][_01XxZz?]*"
+        OCTAL_NUMBER    = "regexp:\d[_\d]*'[sS]?[oO][0-7XxZz?][_0-7XxZz?]*"
+        HEX_NUMBER      = "regexp:\d[_\d]*'[sS]?[hH][0-9ABCDEFXxZz?][_0-9ABCDEFXxZz?]*"
+    ]
+
+    consumeTokenMethod("((?!.*_with_recover).*_recover)") = "consumeTokenFast"
+}
+
+SvFile ::= [ (TimeunitsDeclaration ';' )* ] ModuleDeclaration *
+
+// Generic Rules
+
+private Statement_recover ::= !';'
+
+private meta CSV ::= <<param>> ( ',' <<param>> )* ','?
+
+
+// Timeunits
+
+TimeunitsDeclaration ::=
+
+      timeunit TimeLiteral [ '/' TimeLiteral ]
+    | timeprecision TimeLiteral {
+    pin(".*") = 1
+    recoverWhile = Statement_recover
+}
+
+
+TimeLiteral ::= UNSIGNED_NUMBER TimeUnit
+
+private TimeUnit ::= s | ms | us | ns | ps | fs
+
+// Module
+
+ModuleDeclaration ::=
+
+    ModuleKeyword IDENTIFIER ModuleHeader ';'
+    [ (TimeunitsDeclaration ';') * ]
+
+    endmodule [ ':' IDENTIFIER ] {
+    pin = 2
+    }
+
+private ModuleKeyword ::= module | macromodule
+
+ModuleHeader ::=  [ ParameterPortDeclarationList ] [ PortDeclarationList ] {
+    recoverWhile = Statement_recover
+}
+
+// Port Declarations
+
+ParameterPortDeclarationList ::=
+
+    '#' '(' [ <<CSV ParameterPortDeclaration>> ] ')' {
+//    pin = 1
+    }
+
+ParameterPortDeclaration ::= ( parameter | localparam ) Type IDENTIFIER UnpackedDimension * [ '=' ConstantExpression ]
+
+PortDeclarationList ::=
+
+    '(' [ <<CSV PortDeclaration>> ] ')'
+
+PortDeclaration ::=
+
+    PortDirection Type IDENTIFIER [ '=' ConstantExpression ]
+
+private PortDirection ::= input | output | inout | ref
+
+// Types
+
+Type ::= (BuiltinType | IDENTIFIER) [ signed | unsigned ] [ UnpackedDimension ]
+
+private BuiltinType ::= logic | int | wire | reg
+
+UnpackedDimension ::= '[' UNSIGNED_NUMBER ':' UNSIGNED_NUMBER ']'
+
+// Expressions
+
+ConstantExpression ::= Number
+
+Number ::= BINARY_NUMBER | OCTAL_NUMBER | HEX_NUMBER | UNSIGNED_NUMBER
+

@@ -1,5 +1,6 @@
 import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.changelog.markdownToHTML
+import org.jetbrains.intellij.tasks.RunIdeTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 fun prop(key: String) = project.findProperty(key).toString()
@@ -41,6 +42,7 @@ intellij {
     type.set(prop("platformType"))
     downloadSources.set(prop("platformDownloadSources").toBoolean())
     updateSinceUntilBuild.set(true)
+//    sandboxDir.set("${projectDir.path}/src/test")
 
     // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file.
     plugins.set(prop("platformPlugins").split(',').map(String::trim).filter(String::isNotEmpty))
@@ -54,6 +56,20 @@ tasks {
             apiVersion = "1.5"
             freeCompilerArgs = listOf("-Xjvm-default=enable")
         }
+    }
+
+    withType<RunIdeTask> {
+        // Default args for IDEA installation
+        jvmArgs("-Xmx768m", "-XX:+UseConcMarkSweepGC", "-XX:SoftRefLRUPolicyMSPerMB=50")
+        // Disable plugin auto reloading. See `com.intellij.ide.plugins.DynamicPluginVfsListener`
+        jvmArgs("-Didea.auto.reload.plugins=false")
+        // Don't show "Tip of the Day" at startup
+        jvmArgs("-Dide.show.tips.on.startup.default.value=false")
+        // uncomment if `unexpected exception ProcessCanceledException` prevents you from debugging a running IDE
+        // jvmArgs("-Didea.ProcessCanceledException=disabled")
+
+        // Uncomment to enable FUS testing mode
+        // jvmArgs("-Dfus.internal.test.mode=true")
     }
 }
 

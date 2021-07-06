@@ -18,17 +18,11 @@ plugins {
     // ktlint linter - read more: https://github.com/JLLeitschuh/ktlint-gradle
     id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
     // https://github.com/JetBrains/gradle-grammar-kit-plugin
-    id("org.jetbrains.grammarkit") version "2021.1.3"
+    // Grammar-Kit gradle tasks not fully reliable yet
 }
 
 group = prop("pluginGroup")
 version = prop("pluginVersion")
-
-// Configure project's dependencies
-apply {
-    plugin("org.jetbrains.grammarkit")
-    plugin("org.jetbrains.intellij")
-}
 
 repositories {
     mavenCentral()
@@ -83,23 +77,6 @@ detekt {
     }
 }
 
-// gradle-grammar-kit-plugin https://github.com/JetBrains/gradle-grammar-kit-plugin
-// Has various problems and is not reliable
-val generateSvLexer = task<org.jetbrains.grammarkit.tasks.GenerateLexer>("generateSvLexer") {
-    source = "src/main/grammar/RustLexer.flex"
-    targetDir = "src/main/gen/com/rbarton/intellijsv/core/lexer"
-    targetClass = "_SvLexer"
-    purgeOldFiles = true
-}
-
-val generateSvParser = task<org.jetbrains.grammarkit.tasks.GenerateParser>("generateSvParser") {
-    source = "src/main/grammar/module.bnf"
-    targetRoot = "src/main/gen"
-    pathToParser = "/com/rbarton/intellijsv/core/parser/SvParser.java"
-    pathToPsiRoot = "/com/rbarton/intellijsv/core/psi"
-    purgeOldFiles = true
-}
-
 tasks {
     withType<JavaCompile> {
         sourceCompatibility = "1.8"
@@ -107,7 +84,6 @@ tasks {
     }
     withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"
-        dependsOn(generateSvLexer, generateSvParser)
     }
 
     withType<Detekt> {

@@ -2,7 +2,7 @@ import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-fun properties(key: String) = project.findProperty(key).toString()
+fun prop(key: String) = project.findProperty(key).toString()
 
 plugins {
     // Java support
@@ -17,12 +17,19 @@ plugins {
     id("io.gitlab.arturbosch.detekt") version "1.17.1"
     // ktlint linter - read more: https://github.com/JLLeitschuh/ktlint-gradle
     id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
+    // https://github.com/JetBrains/gradle-grammar-kit-plugin
+    id("org.jetbrains.grammarkit") version "2021.1.3"
 }
 
-group = properties("pluginGroup")
-version = properties("pluginVersion")
+group = prop("pluginGroup")
+version = prop("pluginVersion")
 
 // Configure project's dependencies
+apply {
+    plugin("org.jetbrains.grammarkit")
+    plugin("org.jetbrains.intellij")
+}
+
 repositories {
     mavenCentral()
 }
@@ -35,20 +42,31 @@ sourceSets["main"].java.srcDirs("src/main/gen")
 // Configure gradle-intellij-plugin plugin.
 // Read more: https://github.com/JetBrains/gradle-intellij-plugin
 intellij {
-    pluginName.set(properties("pluginName"))
-    version.set(properties("platformVersion"))
-    type.set(properties("platformType"))
-    downloadSources.set(properties("platformDownloadSources").toBoolean())
+    pluginName.set(prop("pluginName"))
+    version.set(prop("platformVersion"))
+    type.set(prop("platformType"))
+    downloadSources.set(prop("platformDownloadSources").toBoolean())
     updateSinceUntilBuild.set(true)
 
     // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file.
-    plugins.set(properties("platformPlugins").split(',').map(String::trim).filter(String::isNotEmpty))
+    plugins.set(prop("platformPlugins").split(',').map(String::trim).filter(String::isNotEmpty))
+}
+
+tasks {
+    withType<KotlinCompile> {
+        kotlinOptions {
+            jvmTarget = "1.8"
+            languageVersion = "1.5"
+            apiVersion = "1.5"
+            freeCompilerArgs = listOf("-Xjvm-default=enable")
+        }
+    }
 }
 
 // Configure gradle-changelog-plugin plugin.
 // Read more: https://github.com/JetBrains/gradle-changelog-plugin
 changelog {
-    version = properties("pluginVersion")
+    version = prop("pluginVersion")
     groups = emptyList()
 }
 
@@ -65,14 +83,31 @@ detekt {
     }
 }
 
+// gradle-grammar-kit-plugin https://github.com/JetBrains/gradle-grammar-kit-plugin
+// Has various problems and is not reliable
+val generateSvLexer = task<org.jetbrains.grammarkit.tasks.GenerateLexer>("generateSvLexer") {
+    source = "src/main/grammar/RustLexer.flex"
+    targetDir = "src/main/gen/com/rbarton/intellijsv/core/lexer"
+    targetClass = "_SvLexer"
+    purgeOldFiles = true
+}
+
+val generateSvParser = task<org.jetbrains.grammarkit.tasks.GenerateParser>("generateSvParser") {
+    source = "src/main/grammar/module.bnf"
+    targetRoot = "src/main/gen"
+    pathToParser = "/com/rbarton/intellijsv/core/parser/SvParser.java"
+    pathToPsiRoot = "/com/rbarton/intellijsv/core/psi"
+    purgeOldFiles = true
+}
+
 tasks {
-    // Set the compatibility versions to 1.8
     withType<JavaCompile> {
         sourceCompatibility = "1.8"
         targetCompatibility = "1.8"
     }
     withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"
+        dependsOn(generateSvLexer, generateSvParser)
     }
 
     withType<Detekt> {
@@ -80,9 +115,9 @@ tasks {
     }
 
     patchPluginXml {
-        version.set(properties("pluginVersion"))
-        sinceBuild.set(properties("pluginSinceBuild"))
-        untilBuild.set(properties("pluginUntilBuild"))
+        version.set(prop("pluginVersion"))
+        sinceBuild.set(prop("pluginSinceBuild"))
+        untilBuild.set(prop("pluginUntilBuild"))
 
         // Extract the <!-- Plugin description --> section from README.md and provide for the plugin's manifest
         pluginDescription.set(
@@ -102,7 +137,7 @@ tasks {
     }
 
     runPluginVerifier {
-        ideVersions.set(properties("pluginVerifierIdeVersions").split(',').map(String::trim).filter(String::isNotEmpty))
+        ideVersions.set(prop("pluginVerifierIdeVersions").split(',').map(String::trim).filter(String::isNotEmpty))
     }
 
     publishPlugin {
@@ -111,6 +146,6 @@ tasks {
         // pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3
         // Specify pre-release label to publish the plugin in a custom Release Channel automatically. Read more:
         // https://plugins.jetbrains.com/docs/intellij/deployment.html#specifying-a-release-channel
-        channels.set(listOf(properties("pluginVersion").split('-').getOrElse(1) { "default" }.split('.').first()))
+        channels.set(listOf(prop("pluginVersion").split('-').getOrElse(1) { "default" }.split('.').first()))
     }
 }

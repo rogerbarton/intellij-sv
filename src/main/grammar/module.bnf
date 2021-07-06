@@ -92,7 +92,7 @@ ModuleDeclaration ::=
     pin = 2
     mixin = "ch.rbarton.intellijsv.core.psi.ext.SvNamedElementImpl"
     implements = "ch.rbarton.intellijsv.core.psi.ext.SvNamedElement"
-    methods = [getName setName getNameIdentifier
+    methods = [getName setName getNameIdentifier getPresentation
         getIdentifier = "/IdentifierRule[0]"
         getIdentifierPostfix = "/IdentifierRule[1]"
     ]

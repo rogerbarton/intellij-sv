@@ -19,5 +19,6 @@
         <colorSettingsPage implementation="ch.rbarton.intellijsv.ide.colors.SvColorSettingsPage"/>
         <lang.commenter language="System Verilog" implementationClass="ch.rbarton.intellijsv.ide.SvCommenter"/>
         <completion.contributor language="System Verilog" implementationClass="ch.rbarton.intellijsv.ide.SvCompletionContributor"/>
+        <gotoSymbolContributor implementation="ch.rbarton.intellijsv.core.psi.SvChooseByNameContributor"/>
     </extensions>
 </idea-plugin>

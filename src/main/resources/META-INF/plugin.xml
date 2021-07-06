@@ -18,5 +18,6 @@
                                        implementationClass="com.github.rogerbarton.intellijsv.core.SvSyntaxHighlighterFactory"/>
         <colorSettingsPage implementation="com.github.rogerbarton.intellijsv.ide.colors.SvColorSettingsPage"/>
         <lang.commenter language="System Verilog" implementationClass="com.github.rogerbarton.intellijsv.ide.SvCommenter"/>
+        <completion.contributor language="System Verilog" implementationClass="com.github.rogerbarton.intellijsv.ide.SvCompletionContributor"/>
     </extensions>
 </idea-plugin>

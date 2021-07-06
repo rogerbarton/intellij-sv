@@ -61,6 +61,11 @@ private Statement_recover ::= !';'
 private meta CSV ::= <<param>> ( ',' <<param>> )* ','?
 
 
+// Trivial Rules
+IdentifierRule ::= IDENTIFIER
+UnsignedNumberRule ::= UNSIGNED_NUMBER
+
+
 // Timeunits
 
 TimeunitsDeclaration ::=
@@ -80,14 +85,17 @@ private TimeUnit ::= s | ms | us | ns | ps | fs
 
 ModuleDeclaration ::=
 
-    module IDENTIFIER ModuleHeader ';'
+    module IdentifierRule ModuleHeader ';'
     [ (TimeunitsDeclaration ';') * ]
 
-    endmodule [ ':' IDENTIFIER ] {
+    endmodule [ ':' IdentifierRule ] {
     pin = 2
     mixin = "com.github.rogerbarton.intellijsv.core.psi.ext.SvNamedElementImpl"
     implements = "com.github.rogerbarton.intellijsv.core.psi.ext.SvNamedElement"
-    methods = [getName setName getNameIdentifier]
+    methods = [getName setName getNameIdentifier
+        getIdentifier = "/IdentifierRule[0]"
+        getIdentifierPostfix = "/IdentifierRule[1]"
+    ]
     }
 
 ModuleHeader ::=  [ ParameterPortDeclarationList ] [ PortDeclarationList ] {
@@ -120,7 +128,7 @@ Type ::= (BuiltinType | IDENTIFIER) [ signed | unsigned ] [ UnpackedDimension ]
 
 private BuiltinType ::= logic | int | wire | reg
 
-UnpackedDimension ::= '[' UNSIGNED_NUMBER ':' UNSIGNED_NUMBER ']'
+UnpackedDimension ::= '[' UnsignedNumberRule ':' UnsignedNumberRule ']'
 
 // Expressions
 

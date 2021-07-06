@@ -3,17 +3,16 @@ package com.github.rogerbarton.intellijsv.core.psi.impl
 import com.github.rogerbarton.intellijsv.core.psi.SvElementFactory
 import com.github.rogerbarton.intellijsv.core.psi.SvModuleDeclaration
 import com.github.rogerbarton.intellijsv.core.psi.SvTypes
-import com.github.rogerbarton.intellijsv.core.psi.ext.getIdentifier
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 
 class SvPsiImplUtil {
     companion object {
         @JvmStatic
-        fun getName(element: SvModuleDeclaration): String? = element.getIdentifier().text
+        fun getName(element: SvModuleDeclaration): String? = element.getIdentifier.text
 
         @JvmStatic
-        fun getNameIdentifier(element: SvModuleDeclaration): PsiElement = element.getIdentifier()
+        fun getNameIdentifier(element: SvModuleDeclaration): PsiElement = element.getIdentifier
 
         @JvmStatic
         fun setName(element: SvModuleDeclaration, newName: String): PsiElement

@@ -1,5 +1,5 @@
 <idea-plugin>
-    <id>com.github.rogerbarton.intellijsv</id>
+    <id>ch.rbarton.intellijsv</id>
     <name>System Verilog</name>
     <vendor>Roger Barton</vendor>
 
@@ -8,16 +8,16 @@
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <fileType name="System Verilog File" implementationClass="com.github.rogerbarton.intellijsv.SvFileType"
+        <fileType name="System Verilog" implementationClass="ch.rbarton.intellijsv.SvFileType"
                   fieldName="INSTANCE" language="System Verilog" extensions="sv"/>
 
         <lang.parserDefinition language="System Verilog"
-                               implementationClass="com.github.rogerbarton.intellijsv.core.psi.SvParserDefinition"/>
+                               implementationClass="ch.rbarton.intellijsv.core.psi.SvParserDefinition"/>
 
         <lang.syntaxHighlighterFactory language="System Verilog"
-                                       implementationClass="com.github.rogerbarton.intellijsv.core.SvSyntaxHighlighterFactory"/>
-        <colorSettingsPage implementation="com.github.rogerbarton.intellijsv.ide.colors.SvColorSettingsPage"/>
-        <lang.commenter language="System Verilog" implementationClass="com.github.rogerbarton.intellijsv.ide.SvCommenter"/>
-        <completion.contributor language="System Verilog" implementationClass="com.github.rogerbarton.intellijsv.ide.SvCompletionContributor"/>
+                                       implementationClass="ch.rbarton.intellijsv.core.SvSyntaxHighlighterFactory"/>
+        <colorSettingsPage implementation="ch.rbarton.intellijsv.ide.colors.SvColorSettingsPage"/>
+        <lang.commenter language="System Verilog" implementationClass="ch.rbarton.intellijsv.ide.SvCommenter"/>
+        <completion.contributor language="System Verilog" implementationClass="ch.rbarton.intellijsv.ide.SvCompletionContributor"/>
     </extensions>
 </idea-plugin>

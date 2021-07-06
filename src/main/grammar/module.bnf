@@ -1,19 +1,19 @@
 {
-    parserClass="com.github.rogerbarton.intellijsv.core.parser.SvParser"
-    parserUtilClass="com.github.rogerbarton.intellijsv.core.parser.SvParserUtil"
+    parserClass="ch.rbarton.intellijsv.core.parser.SvParser"
+    parserUtilClass="ch.rbarton.intellijsv.core.parser.SvParserUtil"
 
     extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
     // Use extension methods instead so we can use kotlin, see https://github.com/JetBrains/Grammar-Kit/issues/70
-     psiImplUtilClass="com.github.rogerbarton.intellijsv.core.psi.impl.SvPsiImplUtil"
+     psiImplUtilClass="ch.rbarton.intellijsv.core.psi.impl.SvPsiImplUtil"
 
     psiClassPrefix="Sv"
     psiImplClassSuffix="Impl"
-    psiPackage="com.github.rogerbarton.intellijsv.core.psi"
-    psiImplPackage="com.github.rogerbarton.intellijsv.core.psi.impl"
+    psiPackage="ch.rbarton.intellijsv.core.psi"
+    psiImplPackage="ch.rbarton.intellijsv.core.psi.impl"
 
-    elementTypeHolderClass="com.github.rogerbarton.intellijsv.core.psi.SvTypes"
-    elementTypeClass="com.github.rogerbarton.intellijsv.core.psi.SvElementType"
-    tokenTypeClass="com.github.rogerbarton.intellijsv.core.psi.SvTokenType"
+    elementTypeHolderClass="ch.rbarton.intellijsv.core.psi.SvTypes"
+    elementTypeClass="ch.rbarton.intellijsv.core.psi.SvElementType"
+    tokenTypeClass="ch.rbarton.intellijsv.core.psi.SvTokenType"
 
     tokens = [
         LBRACE      =  '{'
@@ -90,8 +90,8 @@ ModuleDeclaration ::=
 
     endmodule [ ':' IdentifierRule ] {
     pin = 2
-    mixin = "com.github.rogerbarton.intellijsv.core.psi.ext.SvNamedElementImpl"
-    implements = "com.github.rogerbarton.intellijsv.core.psi.ext.SvNamedElement"
+    mixin = "ch.rbarton.intellijsv.core.psi.ext.SvNamedElementImpl"
+    implements = "ch.rbarton.intellijsv.core.psi.ext.SvNamedElement"
     methods = [getName setName getNameIdentifier
         getIdentifier = "/IdentifierRule[0]"
         getIdentifierPostfix = "/IdentifierRule[1]"

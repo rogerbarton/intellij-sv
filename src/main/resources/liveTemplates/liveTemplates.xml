@@ -1,0 +1,8 @@
+<templateSet group="System Verilog">
+  <template name="module" value="module $NAME$ # ($PARAMS$) ($PORTS$)&#10;&#10;endmodule : $NAME$" description="Module with parameters and ports" toReformat="true" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="PARAMS" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="PORTS" expression="" defaultValue="" alwaysStopAt="true" />
+    <context  />
+  </template>
+</templateSet>

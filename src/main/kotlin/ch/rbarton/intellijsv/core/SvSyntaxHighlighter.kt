@@ -39,6 +39,7 @@ class SvSyntaxHighlighter : SyntaxHighlighterBase()
 
             LINE_COMMENT -> SvColor.LINE_COMMENT
             BLOCK_COMMENT -> SvColor.BLOCK_COMMENT
+            DOC_COMMENT -> SvColor.DOC_COMMENT
 
             TokenType.BAD_CHARACTER -> SvColor.BAD_CHARACTER
 

@@ -26,6 +26,7 @@ enum class SvColor(humanName: String, default: TextAttributesKey? = null) {
 
     LINE_COMMENT("Comments//Line comment", Default.LINE_COMMENT),
     BLOCK_COMMENT("Comments//Block comment", Default.BLOCK_COMMENT),
+    DOC_COMMENT("Comments//Documentation comment", Default.DOC_COMMENT),
 
     BAD_CHARACTER("Error//Bad character", HighlighterColors.BAD_CHARACTER),
     ;

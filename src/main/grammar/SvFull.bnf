@@ -2612,15 +2612,14 @@ unbased_unsized_literal ::= "'0" | "'1" | "'" z_or_x
 
 // A.8.8 Strings 
 
-string_literal ::= """ { Any_ASCII_Characters } """ //TODO
+string_literal ::= """ { Any_ASCII_Characters } """
 
 // A.9 General 
 
 // A.9.1 Attributes 
 
-attribute_instance ::= "("* attr_spec { "," attr_spec } "*)"
-attr_spec ::= attr_name [ "=" constant_expression ]
-attr_name ::= identifier
+attribute_instance ::= "(*" attr_spec { "," attr_spec } "*)"
+attr_spec ::= identifier [ "=" constant_expression ]
 
 // A.9.2 Comments 
 

@@ -15,10 +15,10 @@ class SvPsiImplUtil
     companion object
     {
         @JvmStatic
-        fun getName(element: SvModuleDeclaration): String? = element.getIdentifier.text
+        fun getName(element: SvModuleDeclaration): String? = element.identifier.text
 
         @JvmStatic
-        fun getNameIdentifier(element: SvModuleDeclaration): PsiElement = element.getIdentifier
+        fun getNameIdentifier(element: SvModuleDeclaration): PsiElement = element.identifier
 
         @JvmStatic
         fun setName(element: SvModuleDeclaration, newName: String): PsiElement

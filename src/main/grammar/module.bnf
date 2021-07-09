@@ -35,6 +35,13 @@
         DOT         =  '.'
         UNDERSCORE  =  '_'
 
+        GTGT      = ">>"
+        GTEQ      = ">="
+        LTLT      = "<<"
+        LTEQ      = "<="
+        OROR      = "||"
+        ANDAND    = "&&"
+
         WHITE_SPACE     = 'regexp:[\s\r\n]+'
         IDENTIFIER      = 'regexp:[a-zA-Z_][a-zA-Z0-9_$]*'
         LINE_COMMENT    = 'regexp://.*'
@@ -87,15 +94,14 @@ private TimeUnit ::= s | ms | us | ns | ps | fs
 ModuleDeclaration ::=
 
     module IdentifierRule ModuleHeader ';'
-    [ (TimeunitsDeclaration ';') * ]
-
+    ModuleItem *
     endmodule [ ':' IdentifierRule ] {
     pin = 2
     mixin = "ch.rbarton.intellijsv.core.psi.ext.SvNamedElementImpl"
     implements = "ch.rbarton.intellijsv.core.psi.ext.SvNamedElement"
     methods = [getName setName getNameIdentifier getPresentation
-        getIdentifier = "/IdentifierRule[0]"
-        getIdentifierPostfix = "/IdentifierRule[1]"
+        identifier = "/IdentifierRule[0]"
+        identifierPostfix = "/IdentifierRule[1]"
     ]
     }
 
@@ -123,6 +129,55 @@ PortDeclaration ::=
 
 private PortDirection ::= input | output | inout | ref
 
+// Module Item
+
+ModuleItem ::=
+
+      AssignStmt
+    | AlwaysStmt
+    | ModuleInstantiation
+    | GenerateRegion
+    | TimeunitsDeclaration
+    | ModuleDeclaration
+
+AssignStmt ::= assign <<CSV NetAssignment>>
+
+NetAssignment ::= NetLvalue '=' Expression
+
+NetLvalue ::= IDENTIFIER [ UnpackedDimension * ]
+
+AlwaysStmt ::= AlwaysKeyword AlwaysItem {
+    pin = 1
+}
+
+AlwaysKeyword ::= 'always_comb' | 'always_ff' | 'always_latch' | 'always'
+
+AlwaysItem ::= [ IDENTIFIER ':' ] StatementItem
+
+StatementItem ::=
+
+      BlockingAssignment ';'
+    | NonBlockingAssignment ';'
+
+BlockingAssignment ::=
+
+    NetAssignment
+
+NonBlockingAssignment ::= NetLvalue '<=' Expression
+
+
+// Module Instantiation
+
+ModuleInstantiation ::= IdentifierRule [ ParameterValueAssignment ] IdentifierRule
+
+ParameterValueAssignment ::= '#' '(' [ <<CSV Expression>> | <<CSV NamedParameterAssignment>> ] ')'
+
+NamedParameterAssignment ::= '.' IDENTIFIER '(' [ Expression ] ')'
+
+GenerateRegion ::= generate GenerateItem endgenerate
+
+GenerateItem ::= todo
+
 // Types
 
 Type ::= (BuiltinType | IDENTIFIER) [ signed | unsigned ] [ UnpackedDimension ]
@@ -132,6 +187,8 @@ private BuiltinType ::= logic | int | wire | reg
 UnpackedDimension ::= '[' UnsignedNumberRule ':' UnsignedNumberRule ']'
 
 // Expressions
+
+Expression ::= IDENTIFIER | ConstantExpression
 
 ConstantExpression ::= Number
 

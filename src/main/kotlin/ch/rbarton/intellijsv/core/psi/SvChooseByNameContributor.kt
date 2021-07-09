@@ -9,7 +9,7 @@ import com.intellij.util.containers.toArray
 class SvChooseByNameContributor : ChooseByNameContributor
 {
     override fun getNames(project: Project, includeNonProjectItems: Boolean): Array<String> =
-        SvUtil.findModuleIdentifiers(project).map { it.getIdentifier.text }.toTypedArray()
+        SvUtil.findModuleIdentifiers(project).map { it.identifier.text }.toTypedArray()
 
     override fun getItemsByName(
         name: String?, pattern: String?, project: Project, includeNonProjectItems: Boolean

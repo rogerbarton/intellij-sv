@@ -7,11 +7,11 @@ module filter #(
     input logic clk_i,  // Clock signal
     input logic rst_ni, // Asynchronous reset
 
-    input  logic [DataWidth-1:0] data_in_i,     // Incoming data
+    input  logic [DataWidth:0] data_in_i,     // Incoming data
     input  logic                 data_in_req_i, // Req at input
     output logic                 data_in_ack_o, // Ack at input
 
-    output logic [DataWidth-1:0] data_out_o,     // Outgoing data
+    output logic [DataWidth:0] data_out_o,     // Outgoing data
     output logic                 data_out_req_o, // Req at output
     input  logic                 data_out_ack_i  // Ack at output
   );
@@ -23,16 +23,16 @@ module filter #(
    *************************/
 
   // ALU output signal
-  logic signed [DataWidth+CoeffScale-1:0] acc_d, acc_q, multiplier;
+  logic signed [DataWidth:0] acc_d, acc_q, multiplier;
 
   // Output register
-  logic [DataWidth-1:0] out_reg_d, out_reg_q;
+  logic [DataWidth:0] out_reg_d, out_reg_q;
   logic                 out_reg_en;
 
   logic                 wen;    // Are we writing to the ram
-  logic [AddrWidth-1:0] ramAddr_d, ramAddr_q, n_d, n_q;
-  logic [DataWidth-1:0] data_ram_o;
-  logic [CoeffScale-1:0] b_n;
+  logic [AddrWidth:0] ramAddr_d, ramAddr_q, n_d, n_q;
+  logic [DataWidth:0] data_ram_o;
+  logic [CoeffScale:0] b_n;
 
   /***************************
    *  Module instantiations  *

@@ -65,6 +65,7 @@ SvFile ::= [ (TimeunitsDeclaration ';' )* ] ModuleDeclaration *
 // Generic Rules
 
 private Statement_recover ::= !';'
+private StatementCsv_recover ::= !(';' | ',')
 
 private meta CSV ::= <<param>> ( ',' <<param>> )* ','?
 
@@ -87,7 +88,7 @@ TimeunitsDeclaration ::=
 
 TimeLiteral ::= UNSIGNED_NUMBER TimeUnit
 
-private TimeUnit ::= s | ms | us | ns | ps | fs
+TimeUnit ::= s | ms | us | ns | ps | fs
 
 // Module
 
@@ -117,34 +118,45 @@ ParameterPortDeclarationList ::=
 //    pin = 1
     }
 
-ParameterPortDeclaration ::= ( parameter | localparam ) Type IDENTIFIER UnpackedDimension * [ '=' ConstantExpression ]
+ParameterPortDeclaration ::= ParameterType Type IDENTIFIER UnpackedDimension * [ '=' ConstantExpression ] {
+    methods = [ defaultValue = "ConstantExpression" ]
+}
 
-PortDeclarationList ::=
+ParameterType ::= parameter | localparam
 
-    '(' [ <<CSV PortDeclaration>> ] ')'
+PortDeclarationList ::= '(' [ <<CSV PortDeclaration>> ] ')'
 
 PortDeclaration ::=
 
-    PortDirection Type IDENTIFIER [ '=' ConstantExpression ]
+    PortDirection Type IDENTIFIER [ '=' ConstantExpression ] {
+    methods = [ defaultValue = "ConstantExpression" ]
+    }
 
-private PortDirection ::= input | output | inout | ref
+PortDirection ::= input | output | inout | ref
 
 // Module Item
 
 ModuleItem ::=
 
-      AssignStmt
+      AssignStmt ';'
     | AlwaysStmt
     | ModuleInstantiation
     | GenerateRegion
-    | TimeunitsDeclaration
+    | TimeunitsDeclaration ';'
     | ModuleDeclaration
 
 AssignStmt ::= assign <<CSV NetAssignment>>
 
-NetAssignment ::= NetLvalue '=' Expression
+NetAssignment ::= NetLvalue AssignOperator Expression {
+    pin = 2
+    recoverWhile = StatementCsv_recover
+}
 
-NetLvalue ::= IDENTIFIER [ UnpackedDimension * ]
+NetLvalue ::= IDENTIFIER UnpackedDimension *
+
+AssignOperator ::= '=' | '<='
+
+// Always
 
 AlwaysStmt ::= AlwaysKeyword AlwaysItem {
     pin = 1
@@ -156,19 +168,17 @@ AlwaysItem ::= [ IDENTIFIER ':' ] StatementItem
 
 StatementItem ::=
 
-      BlockingAssignment ';'
-    | NonBlockingAssignment ';'
-
-BlockingAssignment ::=
-
-    NetAssignment
-
-NonBlockingAssignment ::= NetLvalue '<=' Expression
+      NetAssignment ';'
 
 
 // Module Instantiation
 
-ModuleInstantiation ::= IdentifierRule [ ParameterValueAssignment ] IdentifierRule
+ModuleInstantiation ::= IdentifierRule [ ParameterValueAssignment ] IdentifierRule {
+    methods = [
+        moduleIdentifier = '/IdentifierRule[0]'
+        instanceIdentifier = '/IdentifierRule[1]'
+    ]
+}
 
 ParameterValueAssignment ::= '#' '(' [ <<CSV Expression>> | <<CSV NamedParameterAssignment>> ] ')'
 
@@ -176,13 +186,13 @@ NamedParameterAssignment ::= '.' IDENTIFIER '(' [ Expression ] ')'
 
 GenerateRegion ::= generate GenerateItem endgenerate
 
-GenerateItem ::= todo
+GenerateItem ::= TODO
 
 // Types
 
 Type ::= (BuiltinType | IDENTIFIER) [ signed | unsigned ] [ UnpackedDimension ]
 
-private BuiltinType ::= logic | int | wire | reg
+BuiltinType ::= logic | int | wire | reg
 
 UnpackedDimension ::= '[' UnsignedNumberRule ':' UnsignedNumberRule ']'
 

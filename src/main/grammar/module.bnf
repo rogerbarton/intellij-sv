@@ -53,6 +53,8 @@
         BINARY_NUMBER   = "regexp:\d[_\d]*'[sS]?[bB][01XxZz?][_01XxZz?]*"
         OCTAL_NUMBER    = "regexp:\d[_\d]*'[sS]?[oO][0-7XxZz?][_0-7XxZz?]*"
         HEX_NUMBER      = "regexp:\d[_\d]*'[sS]?[hH][0-9ABCDEFXxZz?][_0-9ABCDEFXxZz?]*"
+
+        STRING_LITERAL  = "regexp:\"[^\"]*?\"" // Doesn't handle escapes
     ]
 
 //    generateTokenAccessors=true
@@ -245,7 +247,7 @@ EnumItemDeclaration ::= IDENTIFIER [ '[' Number [ ':' Number ] ] [ '=' ConstantE
 
 Expression ::= IDENTIFIER | ConstantExpression
 
-ConstantExpression ::= Number
+ConstantExpression ::= Number | STRING_LITERAL
 
 Number ::= BINARY_NUMBER | OCTAL_NUMBER | HEX_NUMBER | UNSIGNED_NUMBER
 

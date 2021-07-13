@@ -45,17 +45,19 @@
         OROR      = "||"
         ANDAND    = "&&"
 
+        // Literals
+        TIME_LITERAL    = "regexp:\d[_\d]*(s|ms|us|ns|ps|fs)"
+        BINARY_NUMBER   = "regexp:\d[_\d]*'[sS]?[bB][01XxZz?][_01XxZz?]*"
+        OCTAL_NUMBER    = "regexp:\d[_\d]*'[sS]?[oO][0-7XxZz?][_0-7XxZz?]*"
+        HEX_NUMBER      = "regexp:\d[_\d]*'[sS]?[hH][0-9ABCDEFXxZz?][_0-9ABCDEFXxZz?]*"
+        UNSIGNED_NUMBER = 'regexp:\d[_\d]*'
+        SPECIAL_NUMBER  = "regexp:'0|'1|'|x|X|z|Z"
+
         WHITE_SPACE     = 'regexp:[\s\r\n]+'
         IDENTIFIER      = 'regexp:[a-zA-Z_][a-zA-Z0-9_$]*'
         LINE_COMMENT    = 'regexp://.*'
         DOC_COMMENT     = 'regexp:/\*\*(.|\n)*?\*/'
         BLOCK_COMMENT   = 'regexp:/\*(.|\n)*?\*/'
-
-        // Literals
-        UNSIGNED_NUMBER = 'regexp:\d[_\d]*'
-        BINARY_NUMBER   = "regexp:\d[_\d]*'[sS]?[bB][01XxZz?][_01XxZz?]*"
-        OCTAL_NUMBER    = "regexp:\d[_\d]*'[sS]?[oO][0-7XxZz?][_0-7XxZz?]*"
-        HEX_NUMBER      = "regexp:\d[_\d]*'[sS]?[hH][0-9ABCDEFXxZz?][_0-9ABCDEFXxZz?]*"
 
         STRING_LITERAL  = "regexp:\"[^\"]*?\"" // Doesn't handle escapes
     ]
@@ -70,7 +72,7 @@ SvFile ::= [ (TimeunitsDeclaration ';' )* ] ModuleDeclaration *
 // Generic Rules
 
 private Statement_recover ::= !';'
-private CSV_recover ::= !(';' | ')' | '*)')
+private CSV_recover ::= !(';' | ',' | ')' | '*)')   // Must include comma
 
 private meta CSV ::= <<param>> ( ',' <<param>> )* ','?
 
@@ -84,16 +86,11 @@ UnsignedNumberRule ::= UNSIGNED_NUMBER
 
 TimeunitsDeclaration ::=
 
-      timeunit TimeLiteral [ '/' TimeLiteral ]
-    | timeprecision TimeLiteral {
+      timeunit TIME_LITERAL [ '/' TIME_LITERAL ]
+    | timeprecision TIME_LITERAL {
     pin(".*") = 1
     recoverWhile = Statement_recover
 }
-
-
-TimeLiteral ::= UNSIGNED_NUMBER TimeUnit
-
-TimeUnit ::= s | ms | us | ns | ps | fs
 
 // Module
 
@@ -210,8 +207,11 @@ GenerateItem ::= TODO
 Type ::=
 
     ( BuiltinType | IDENTIFIER ) [ Signing ] [ UnpackedDimension ]
+    | IntegerAtomType [ Signing ]
+    | NonIntegerType
     | EnumDeclaration
     | StructUnionDeclaration
+    | string
 
 TypeDeclaration ::= typedef (
       [ enum | struct | union | class ] IDENTIFIER
@@ -261,7 +261,12 @@ NonIntegerType ::= shortreal | real | realtime
 
 Expression ::= IDENTIFIER | ConstantExpression
 
-ConstantExpression ::= Number | STRING_LITERAL
+ConstantExpression ::= Literal
+
+
+// Literals
+
+Literal ::= TIME_LITERAL | Number | SPECIAL_NUMBER | STRING_LITERAL
 
 Number ::= BINARY_NUMBER | OCTAL_NUMBER | HEX_NUMBER | UNSIGNED_NUMBER
 

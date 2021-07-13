@@ -62,7 +62,7 @@
         STRING_LITERAL  = "regexp:\"[^\"]*?\"" // Doesn't handle escapes
     ]
 
-//    generateTokenAccessors=true
+    generateTokenAccessors=true
 
     consumeTokenMethod("((?!.*_with_recover).*_recover)") = "consumeTokenFast"
 }
@@ -80,14 +80,14 @@ private meta CSV ::= <<param>> ( ',' <<param>> )* ','?
 // Trivial Rules
 IdentifierRule ::= IDENTIFIER
 UnsignedNumberRule ::= UNSIGNED_NUMBER
-
+TimeLiteralRule ::= TIME_LITERAL
 
 // Timeunits
 
 TimeunitsDeclaration ::=
 
-      timeunit TIME_LITERAL [ '/' TIME_LITERAL ]
-    | timeprecision TIME_LITERAL {
+      timeunit TimeLiteralRule [ '/' TimeLiteralRule ]
+    | timeprecision TimeLiteralRule {
     pin(".*") = 1
     recoverWhile = Statement_recover
 }
@@ -104,8 +104,8 @@ ModuleDeclaration ::=
     mixin = "ch.rbarton.intellijsv.core.psi.ext.SvNamedElementImpl"
     implements = "ch.rbarton.intellijsv.core.psi.ext.SvNamedElement"
     methods = [getName setName getNameIdentifier getPresentation
-        identifier = "/IdentifierRule[0]"
-        identifierPostfix = "/IdentifierRule[1]"
+        identifier = "IdentifierRule[0]"
+        identifierPostfix = "IdentifierRule[1]"
     ]
     }
 
@@ -120,7 +120,7 @@ ModuleHeader ::=
 
 ParameterDeclaration ::= ParameterType Type IDENTIFIER UnpackedDimension * [ '=' Expression ] {
     pin = 1
-    methods = [ defaultValue = "ConstantExpression" ]
+    methods = [ defaultValue = "Expression" ]
 }
 
 ParameterType ::= parameter | localparam
@@ -231,7 +231,7 @@ EnumBaseType ::=
     | IntegerVectorType [ Signing ] [ PackedDimension ]
     | IDENTIFIER [ PackedDimension ]
 
-EnumMember ::= IDENTIFIER [ '[' Number [ ':' Number ] ] [ '=' ConstantExpression ]
+EnumMember ::= IDENTIFIER [ '[' UnsignedNumberRule [ ':' UnsignedNumberRule ] ] [ '=' ConstantExpression ]
 
 StructUnionDeclaration ::= ( struct | union ) [ packed [ Signing ] ] '{' StructUnionMember + '}' PackedDimension *
 
@@ -271,9 +271,9 @@ ConstantExpression ::= Literal
 
 // Literals
 
-Literal ::= TIME_LITERAL | Number | SPECIAL_NUMBER | STRING_LITERAL
+Literal ::= TIME_LITERAL | NumberLiteral | SPECIAL_NUMBER | STRING_LITERAL
 
-Number ::= BINARY_NUMBER | OCTAL_NUMBER | HEX_NUMBER | UNSIGNED_NUMBER
+NumberLiteral ::= BINARY_NUMBER | OCTAL_NUMBER | HEX_NUMBER | UNSIGNED_NUMBER
 
 // Attributes
 

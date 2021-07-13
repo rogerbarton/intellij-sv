@@ -137,6 +137,7 @@ ModuleItem ::=
 
       NetDeclaration ';'
     | ParameterDeclaration ';'
+    | TypeDeclaration ';'
     | AssignStmt ';'
     | AlwaysStmt
     | ModuleInstantiation ';'
@@ -152,6 +153,7 @@ IdentifierWithDefault ::= IDENTIFIER [ '=' Expression ] {
 
 AssignStmt ::= assign <<CSV Assignment>> {
     pin = 1
+    recoverWhile = Statement_recover
 }
 
 Assignment ::= NetLvalue AssignOperator Expression {
@@ -198,11 +200,46 @@ GenerateItem ::= TODO
 
 // Types
 
-Type ::= (BuiltinType | IDENTIFIER) [ signed | unsigned ] [ UnpackedDimension ]
+Type ::=
+
+    (BuiltinType | IDENTIFIER) [ Signing ] [ UnpackedDimension ]
+    | EnumDeclaration
+
+Signing ::= signed | unsigned
 
 BuiltinType ::= logic | int | wire | reg
 
+IntegerAtomType ::= byte | shortint | int | longint | integer | time
+
+IntegerVectorType ::= bit | logic | reg
+
+NonIntegerType ::= shortreal | real | realtime
+
+EnumBaseType ::=
+
+      IntegerAtomType [ Signing ]
+    | IntegerVectorType [ Signing ] [ PackedDimension ]
+    | IDENTIFIER [ PackedDimension ]
+
 UnpackedDimension ::= '[' Expression ':' Expression ']'
+
+private PackedDimension ::= UnpackedDimension
+
+UnsizedDimension ::= '[' ']'
+
+VariableDimension ::=
+
+      UnsizedDimension
+    | UnpackedDimension
+
+TypeDeclaration ::= typedef (
+      [ enum | struct | union | class ] IDENTIFIER
+    | Type IDENTIFIER VariableDimension *
+)
+
+EnumDeclaration ::= enum [ EnumBaseType ] '{' <<CSV EnumItemDeclaration>> '}' PackedDimension *
+
+EnumItemDeclaration ::= IDENTIFIER [ '[' Number [ ':' Number ] ] [ '=' ConstantExpression ]
 
 // Expressions
 

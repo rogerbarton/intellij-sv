@@ -106,17 +106,14 @@ ModuleDeclaration ::=
     ]
     }
 
-ModuleHeader ::=  [ ParameterPortDeclarationList ] [ PortDeclarationList ] {
+ModuleHeader ::=
+
+    [ '#' '(' [ <<CSV ParameterDeclaration>> ] ')' ]
+    [     '(' [ <<CSV PortDeclaration>> ] ')' ] {
     recoverWhile = Statement_recover
 }
 
 // Parameter Declarations
-
-ParameterPortDeclarationList ::=
-
-    '#' '(' [ <<CSV ParameterDeclaration>> ] ')' {
-    pin = 1
-    }
 
 ParameterDeclaration ::= ParameterType Type IDENTIFIER UnpackedDimension * [ '=' Expression ] {
     methods = [ defaultValue = "ConstantExpression" ]
@@ -125,8 +122,6 @@ ParameterDeclaration ::= ParameterType Type IDENTIFIER UnpackedDimension * [ '='
 ParameterType ::= parameter | localparam
 
 // Port Declarations
-
-PortDeclarationList ::= '(' [ <<CSV PortDeclaration>> ] ')'
 
 PortDeclaration ::=
 

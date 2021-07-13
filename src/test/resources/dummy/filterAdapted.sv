@@ -1,3 +1,4 @@
+(* X_CORE_INFO = "xlslice_v1_0_2_xlslice,Vivado 2020.1" *)
 module filter #(
     parameter int unsigned Order      = 127, // Filter order
     parameter int unsigned AddrWidth  = 7,   // Address width
@@ -15,6 +16,18 @@ module filter #(
     output logic                 data_out_req_o, // Req at output
     input  logic                 data_out_ack_i  // Ack at output
   );
+
+  typedef struct packed {
+      logic [2:0] switch;
+      logic       hsync;
+      logic       vsync;
+      logic       vde;
+      logic       valid;
+      logic       ready;
+      logic [7:0] r;
+      logic [7:0] g;
+      logic [7:0] b;
+  } data_t;
 
   localparam int unsigned N = Order;
 

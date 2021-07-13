@@ -461,10 +461,8 @@ constraint_expression ::=
     [ "soft" ] expression_or_dist ";"
     | uniqueness_constraint ";"
     | expression "-->" constraint_set
-    | "if" "(" expression ")" constraint_set [ "else"
-    constraint_set ]
-    | "foreach (" ps_or_hierarchical_array_identifier "["
-    loop_variables "]" ")" constraint_set
+    | "if" "(" expression ")" constraint_set [ "else" constraint_set ]
+    | "foreach (" ps_or_hierarchical_array_identifier "[" loop_variables "]" ")" constraint_set
     | "disable" "soft" constraint_primary ";"
 
 uniqueness_constraint ::= "unique" "{" open_range_list "}"
@@ -502,7 +500,8 @@ package_or_generate_item_declaration ::=
     | function_declaration
     | checker_declaration
     | dpi_import_export
-    | extern_constraint_declaration | class_declaration
+    | extern_constraint_declaration
+    | class_declaration
     | class_constructor_declaration
     | local_parameter_declaration ";"
     | parameter_declaration ";"
@@ -566,8 +565,7 @@ ref_declaration ::= "ref" variable_port_type list_of_variable_identifiers
 
 data_declaration ::=
    
-    [ "const" ] [ "var" ] [ lifetime ] data_type_or_implicit
-    list_of_variable_decl_assignments ";"
+    [ "const" ] [ "var" ] [ lifetime ] data_type_or_implicit list_of_variable_decl_assignments ";"
     | type_declaration
     | package_import_declaration
     | net_type_declaration

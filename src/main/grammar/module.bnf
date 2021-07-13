@@ -16,6 +16,9 @@
     tokenTypeClass="ch.rbarton.intellijsv.core.psi.SvTokenType"
 
     tokens = [
+        LPARENSTAR  =  '(*'
+        RPARENSTAR  =  '*)'
+
         LBRACE      =  '{'
         RBRACE      =  '}'
         LBRACK      =  '['
@@ -67,7 +70,7 @@ SvFile ::= [ (TimeunitsDeclaration ';' )* ] ModuleDeclaration *
 // Generic Rules
 
 private Statement_recover ::= !';'
-private StatementCsv_recover ::= !(';' | ',')
+private CSV_recover ::= !(';' | ')' | '*)')
 
 private meta CSV ::= <<param>> ( ',' <<param>> )* ','?
 
@@ -96,6 +99,7 @@ TimeUnit ::= s | ms | us | ns | ps | fs
 
 ModuleDeclaration ::=
 
+    AttributeInstance *
     module IdentifierRule ModuleHeader ';'
     ModuleItem *
     endmodule [ ':' IdentifierRule ] {
@@ -127,7 +131,7 @@ ParameterType ::= parameter | localparam
 
 PortDeclaration ::=
 
-    PortDirection Type IDENTIFIER [ '=' ConstantExpression ] {
+    AttributeInstance *  PortDirection Type IDENTIFIER [ '=' ConstantExpression ] {
     methods = [ defaultValue = "ConstantExpression" ]
     }
 
@@ -150,7 +154,7 @@ ModuleItem ::=
 NetDeclaration ::= Type <<CSV IdentifierWithDefault>>
 
 IdentifierWithDefault ::= IDENTIFIER [ '=' Expression ] {
-    recoverWhile = StatementCsv_recover
+    recoverWhile = CSV_recover
 }
 
 AssignStmt ::= assign <<CSV Assignment>> {
@@ -159,7 +163,7 @@ AssignStmt ::= assign <<CSV Assignment>> {
 }
 
 Assignment ::= NetLvalue AssignOperator Expression {
-    recoverWhile = StatementCsv_recover
+    recoverWhile = CSV_recover
 }
 
 NetLvalue ::= IDENTIFIER UnpackedDimension *
@@ -172,7 +176,8 @@ AlwaysStmt ::= AlwaysKeyword AlwaysItem {
     pin = 1
 }
 
-AlwaysKeyword ::= 'always_comb' | 'always_ff' | 'always_latch' | 'always'
+//noinspection BnfSuspiciousToken
+AlwaysKeyword ::= always_comb | always_ff | always_latch | always
 
 AlwaysItem ::= [ IDENTIFIER ':' ] StatementItem
 
@@ -204,24 +209,30 @@ GenerateItem ::= TODO
 
 Type ::=
 
-    (BuiltinType | IDENTIFIER) [ Signing ] [ UnpackedDimension ]
+    ( BuiltinType | IDENTIFIER ) [ Signing ] [ UnpackedDimension ]
     | EnumDeclaration
+    | StructUnionDeclaration
 
-Signing ::= signed | unsigned
+TypeDeclaration ::= typedef (
+      [ enum | struct | union | class ] IDENTIFIER
+    | Type IDENTIFIER VariableDimension *
+)
 
-BuiltinType ::= logic | int | wire | reg
-
-IntegerAtomType ::= byte | shortint | int | longint | integer | time
-
-IntegerVectorType ::= bit | logic | reg
-
-NonIntegerType ::= shortreal | real | realtime
+EnumDeclaration ::= enum [ EnumBaseType ] '{' <<CSV EnumMember>> '}' PackedDimension *
 
 EnumBaseType ::=
 
       IntegerAtomType [ Signing ]
     | IntegerVectorType [ Signing ] [ PackedDimension ]
     | IDENTIFIER [ PackedDimension ]
+
+EnumMember ::= IDENTIFIER [ '[' Number [ ':' Number ] ] [ '=' ConstantExpression ]
+
+StructUnionDeclaration ::= ( struct | union ) [ packed [ Signing ] ] '{' StructUnionMember + '}' PackedDimension *
+
+StructUnionMember ::= AttributeInstance * Type <<CSV IdentifierWithDefault>> ';'
+
+// Dimensions
 
 UnpackedDimension ::= '[' Expression ':' Expression ']'
 
@@ -234,14 +245,17 @@ VariableDimension ::=
       UnsizedDimension
     | UnpackedDimension
 
-TypeDeclaration ::= typedef (
-      [ enum | struct | union | class ] IDENTIFIER
-    | Type IDENTIFIER VariableDimension *
-)
+// Built-in Types and Related Keywords
 
-EnumDeclaration ::= enum [ EnumBaseType ] '{' <<CSV EnumItemDeclaration>> '}' PackedDimension *
+Signing ::= signed | unsigned
 
-EnumItemDeclaration ::= IDENTIFIER [ '[' Number [ ':' Number ] ] [ '=' ConstantExpression ]
+BuiltinType ::= logic | int | wire | reg
+
+IntegerAtomType ::= byte | shortint | int | longint | integer | time
+
+IntegerVectorType ::= bit | logic | reg
+
+NonIntegerType ::= shortreal | real | realtime
 
 // Expressions
 
@@ -251,3 +265,11 @@ ConstantExpression ::= Number | STRING_LITERAL
 
 Number ::= BINARY_NUMBER | OCTAL_NUMBER | HEX_NUMBER | UNSIGNED_NUMBER
 
+// Attributes
+
+AttributeInstance ::= '(*' <<CSV IdentifierWithDefault>> '*)' {
+//    pin = 1
+//    recoverWhile = AttributeInstance_recover
+}
+
+private AttributeInstance_recover ::= !'*)'

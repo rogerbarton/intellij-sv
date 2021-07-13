@@ -119,6 +119,7 @@ ModuleHeader ::=
 // Parameter Declarations
 
 ParameterDeclaration ::= ParameterType Type IDENTIFIER UnpackedDimension * [ '=' Expression ] {
+    pin = 1
     methods = [ defaultValue = "ConstantExpression" ]
 }
 
@@ -129,6 +130,7 @@ ParameterType ::= parameter | localparam
 PortDeclaration ::=
 
     AttributeInstance *  PortDirection Type IDENTIFIER [ '=' ConstantExpression ] {
+    pin = 2
     methods = [ defaultValue = "ConstantExpression" ]
     }
 
@@ -148,7 +150,9 @@ ModuleItem ::=
     | TimeunitsDeclaration ';'
     | ModuleDeclaration
 
-NetDeclaration ::= Type <<CSV IdentifierWithDefault>>
+NetDeclaration ::= Type <<CSV IdentifierWithDefault>> {
+    pin = 1
+}
 
 IdentifierWithDefault ::= IDENTIFIER [ '=' Expression ] {
     recoverWhile = CSV_recover
@@ -160,6 +164,7 @@ AssignStmt ::= assign <<CSV Assignment>> {
 }
 
 Assignment ::= NetLvalue AssignOperator Expression {
+    pin = 2
     recoverWhile = CSV_recover
 }
 
@@ -273,7 +278,7 @@ Number ::= BINARY_NUMBER | OCTAL_NUMBER | HEX_NUMBER | UNSIGNED_NUMBER
 // Attributes
 
 AttributeInstance ::= '(*' <<CSV IdentifierWithDefault>> '*)' {
-//    pin = 1
+    pin = 1
 //    recoverWhile = AttributeInstance_recover
 }
 

@@ -44,6 +44,7 @@
         LTEQ      = "<="
         OROR      = "||"
         ANDAND    = "&&"
+        ANDANDAND = "&&&"
 
         // Literals
         TIME_LITERAL    = "regexp:\d[_\d]*(s|ms|us|ns|ps|fs)"
@@ -144,8 +145,10 @@ ModuleItem ::=
       NetDeclaration ';'
     | ParameterDeclaration ';'
     | TypeDeclaration ';'
-    | AssignStmt ';'
-    | AlwaysStmt
+    | ContinuousAssign ';'
+    | AlwaysConstruct
+    | InitialConstruct
+    | FinalConstruct
     | ModuleInstantiation ';'
     | GenerateRegion
     | TimeunitsDeclaration ';'
@@ -159,7 +162,7 @@ IdentifierWithDefault ::= IDENTIFIER [ '=' Expression ] {
     recoverWhile = CSV_recover
 }
 
-AssignStmt ::= assign <<CSV Assignment>> {
+ContinuousAssign ::= assign <<CSV Assignment>> {
     pin = 1
     recoverWhile = Statement_recover
 }
@@ -173,21 +176,66 @@ NetLvalue ::= IDENTIFIER UnpackedDimension *
 
 AssignOperator ::= '=' | '<='
 
-// Always
+// Procedural blocks
 
-AlwaysStmt ::= AlwaysKeyword AlwaysItem {
+InitialConstruct ::= initial Statement {
+    pin = 1
+}
+
+AlwaysConstruct ::= AlwaysKeyword Statement {
+    pin = 1
+}
+
+FinalConstruct ::= final Statement {
     pin = 1
 }
 
 //noinspection BnfSuspiciousToken
 AlwaysKeyword ::= always_comb | always_ff | always_latch | always
 
-AlwaysItem ::= [ IDENTIFIER ':' ] StatementItem
+Statement ::=
 
-StatementItem ::=
+    [ IDENTIFIER ':' ]
+    AttributeInstance *
+    StatementItem
 
-      Assignment ';'
+private StatementItem ::=
 
+      SeqBlock
+    | Assignment ';'
+    | ConditionalStmt
+
+SeqBlock ::=
+
+    begin [ ':' IdentifierRule ]
+    BlockItem *
+    Statement *
+    end [ ':' IdentifierRule ] {
+    pin = 1
+    }
+
+BlockItem ::=
+
+    AttributeInstance * (
+      TypeDeclaration
+    | ParameterDeclaration
+    ) ';'
+
+ConditionalStmt ::=
+
+    [ UniquePriority ]
+    if '(' Predicate ')'
+        Statement
+    ( else if '(' Predicate ')'
+        Statement ) *
+    [ else
+        Statement ]{
+    pin = 2
+    }
+
+UniquePriority ::= unique | unique0 | priority
+
+Predicate ::= <<XSV Expression '&&&'>>
 
 // Module Instantiation
 

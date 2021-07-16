@@ -113,16 +113,18 @@
 
 SvFile ::= [ (TimeunitsDeclaration ';' )* ] ModuleDeclaration *
 
-// Generic Rules
+// Generic Recovers
 
-private Statement_recover ::= !';'
+private Semicolon_recover ::= !';'
 private CSV_recover ::= !(';' | ',' | ')' | '*)')   // Must include comma
+
+// Meta Rules
 
 private meta CSV ::= <<XSV <<item>> ','>>
 private meta XSV ::= <<item>> ( <<sep>> <<item>> )* <<sep>>?
 
-
 // Trivial Rules
+
 IdentifierRule ::= IDENTIFIER
 UnsignedNumberRule ::= UNSIGNED_NUMBER
 TimeLiteralRule ::= TIME_LITERAL
@@ -134,7 +136,7 @@ TimeunitsDeclaration ::=
       timeunit TimeLiteralRule [ '/' TimeLiteralRule ]
     | timeprecision TimeLiteralRule {
     pin(".*") = 1
-    recoverWhile = Statement_recover
+    recoverWhile = Semicolon_recover
 }
 
 // Module
@@ -158,13 +160,15 @@ ModuleHeader ::=
 
     [ '#' '(' [ <<CSV ParameterDeclaration>> ] ')' ]
     [     '(' [ <<CSV PortDeclaration>> ] ')' ] {
-    recoverWhile = Statement_recover
+    pin(".*") = 1
+    recoverWhile = Semicolon_recover
 }
 
 // Parameter Declarations
 
 ParameterDeclaration ::= ParameterType Type IDENTIFIER UnpackedDimension * [ '=' Expression ] {
     pin = 1
+    recoverWhile = CSV_recover
     methods = [ defaultValue = "Expression" ]
 }
 
@@ -174,9 +178,10 @@ ParameterType ::= parameter | localparam
 
 PortDeclaration ::=
 
-    AttributeInstance *  PortDirection Type IDENTIFIER [ '=' ConstantExpression ] {
+    AttributeInstance *  PortDirection Type IDENTIFIER [ '=' ExpressionConst ] {
     pin = 2
-    methods = [ defaultValue = "ConstantExpression" ]
+    methods = [ defaultValue = "ExpressionConst" ]
+    recoverWhile = CSV_recover
     }
 
 PortDirection ::= input | output | inout | ref
@@ -185,29 +190,29 @@ PortDirection ::= input | output | inout | ref
 
 ModuleItem ::=
 
-      NetDeclaration ';'
-    | ParameterDeclaration ';'
+      ParameterDeclaration ';'
     | TypeDeclaration ';'
     | ContinuousAssign ';'
     | AlwaysConstruct
     | InitialConstruct
     | FinalConstruct
     | ModuleInstantiation ';'
+    | NetDeclaration ';'  // After ModuleInstantiation
     | GenerateRegion
     | TimeunitsDeclaration ';'
     | ModuleDeclaration
 
-NetDeclaration ::= Type <<CSV IdentifierWithDefault>> {
+NetDeclaration ::= Type <<CSV IdentifierWithDefault>> !'('{
     pin = 1
+    recoverWhile = Semicolon_recover
 }
 
 IdentifierWithDefault ::= IDENTIFIER [ '=' Expression ] {
-    recoverWhile = CSV_recover
 }
 
 ContinuousAssign ::= assign <<CSV Assignment>> {
     pin = 1
-    recoverWhile = Statement_recover
+    recoverWhile = Semicolon_recover
 }
 
 Assignment ::= NetLvalue AssignOperator Expression {
@@ -215,9 +220,7 @@ Assignment ::= NetLvalue AssignOperator Expression {
     recoverWhile = CSV_recover
 }
 
-NetLvalue ::= IDENTIFIER UnpackedDimension *
-
-AssignOperator ::= '=' | '<='
+NetLvalue ::= HierarchicalIdentifier UnpackedDimension *
 
 // Procedural blocks
 
@@ -290,10 +293,15 @@ ModuleInstantiation ::= IdentifierRule [ '#' PortValueAssignment ] IdentifierRul
 }
 
 PortValueAssignment ::= '(' [ <<CSV Expression>> | <<CSV NamedParameterAssignment>> ] ')' {
-    pin = 2
+    pin = 1
 }
 
-NamedParameterAssignment ::= '.' IDENTIFIER '(' [ Expression ] ')'
+NamedParameterAssignment ::= '.' IDENTIFIER '(' [ Expression ] ')' {
+    pin = 1
+    recoverWhile = NamedParameterAssignment_recover
+}
+
+private NamedParameterAssignment_recover ::= !(',' | ')')
 
 GenerateRegion ::= generate GenerateItem endgenerate
 
@@ -313,7 +321,9 @@ Type ::=
 TypeDeclaration ::= typedef (
       [ enum | struct | union | class ] IDENTIFIER
     | Type IDENTIFIER VariableDimension *
-)
+)   {
+    recoverWhile = Semicolon_recover
+}
 
 EnumDeclaration ::= enum [ EnumBaseType ] '{' <<CSV EnumMember>> '}' PackedDimension *
 
@@ -323,7 +333,7 @@ EnumBaseType ::=
     | IntegerVectorType [ Signing ] [ PackedDimension ]
     | IDENTIFIER [ PackedDimension ]
 
-EnumMember ::= IDENTIFIER [ '[' UnsignedNumberRule [ ':' UnsignedNumberRule ] ] [ '=' ConstantExpression ]
+EnumMember ::= IDENTIFIER [ '[' UnsignedNumberRule [ ':' UnsignedNumberRule ] ] [ '=' ExpressionConst ]
 
 StructUnionDeclaration ::= ( struct | union ) [ packed [ Signing ] ] '{' StructUnionMember + '}' PackedDimension *
 
@@ -331,7 +341,9 @@ StructUnionMember ::= AttributeInstance * Type <<CSV IdentifierWithDefault>> ';'
 
 // Dimensions
 
-UnpackedDimension ::= '[' Expression ':' Expression ']'
+UnpackedDimension ::= '[' Expression ':' Expression ']' {
+//    pin = 1
+}
 
 private PackedDimension ::= UnpackedDimension
 
@@ -341,6 +353,8 @@ VariableDimension ::=
 
       UnsizedDimension
     | UnpackedDimension
+
+BitSelectConst ::= '[' ExpressionConst ']'
 
 // Built-in Types and Related Keywords
 
@@ -354,12 +368,96 @@ IntegerVectorType ::= bit | logic | reg
 
 NonIntegerType ::= shortreal | real | realtime
 
+private IntegerType ::= IntegerVectorType | IntegerAtomType
+
+SimpleType ::= IntegerType | NonIntegerType | IDENTIFIER
+
 // Expressions
 
-Expression ::= IDENTIFIER | ConstantExpression
+Expression ::=
 
-ConstantExpression ::= Literal
+      UnaryExpr
+    | BinaryExpr
+    | IncDecExpr
+    | TernaryExpr
+    | Primary
 
+ExpressionConst ::=
+
+      PrimaryConst
+    | UnaryExprConst
+    | BinaryExprConst
+    | TernaryExprConst
+
+Primary ::=
+
+      Literal
+    | HierarchicalIdentifier
+    | ConcatenationExpr
+    | MultiConcatenationExpr
+    | Cast
+
+PrimaryConst ::=
+
+      Literal
+    | ConcatenationExprConst
+    | MultiConcatenationExprConst
+
+UnaryExpr ::= UnaryOperator AttributeInstance* Primary
+
+UnaryExprConst ::= UnaryOperator AttributeInstance* PrimaryConst
+
+BinaryExpr ::= Expression BinaryOperator AttributeInstance * Expression
+
+BinaryExprConst ::= ExpressionConst BinaryOperator AttributeInstance * ExpressionConst
+
+TernaryExpr ::= Predicate '?' AttributeInstance * Expression ':' Expression
+
+TernaryExprConst ::= ExpressionConst '?' AttributeInstance * ExpressionConst ':' ExpressionConst
+
+IncDecExpr ::=
+      IncDecOperator AttributeInstance * NetLvalue
+    | NetLvalue AttributeInstance * IncDecOperator
+
+Cast ::= CastingType "'" '(' Expression ')'
+
+CastingType ::= Signing | string | const | PrimaryConst | SimpleType
+
+
+ConcatenationExpr ::= '{' <<CSV Expression>> '}'
+
+ConcatenationExprConst ::= '{' <<CSV ExpressionConst>> '}'
+
+MultiConcatenationExpr ::= '{'  '}'
+
+MultiConcatenationExprConst ::= '{' ExpressionConst ConcatenationExprConst '}'
+
+HierarchicalIdentifier ::= [ "$root" '.' ] ( IDENTIFIER BitSelectConst * '.' ) * IDENTIFIER
+
+// Operators
+
+UnaryOperator ::=
+
+    '+' | '-' | '!' | '~' | '&' | '~&' | '|' | '~|' | '^' | '~^' | '^~'
+
+BinaryOperator ::=
+
+      '+'  | '-'  | '*'   | '/'   | '%'
+    | '==' | '!=' | '===' | '!==' | '==?' | '!=?'
+    | '&&' | '||' | '**'
+    | '<'  | '<=' | '>'   | '>='
+    | '&'  | '|'  | '^'   | '^~'  | '~^'
+    | '>>' | '<<' | '>>>' | '<<<'
+    | '->' | '<->'
+
+IncDecOperator ::= '++' | '--'
+
+AssignOperator ::= '=' | '<='
+
+AssignmentOperator ::=
+
+    "=" | "+=" | "-=" | "*=" | "/=" | "%=" | "&=" |
+    "|=" | "^=" | "<<=" | ">>=" | "<<<=" | ">>>="
 
 // Literals
 

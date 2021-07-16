@@ -108,8 +108,12 @@
 
     generateTokenAccessors=true
 
+    // Reduce size of PSI tree for recursive parts
+    extends(".*Stmt|SeqBlock") = Statement
     extends(".*Expr") = Expression
     extends(".*ExprConst") = ExpressionConst
+
+    // Performance for expressions, simplier error messages
     consumeTokenMethod("((?!.*_with_recover).*_recover|Primary)") = "consumeTokenFast"
 }
 
@@ -212,12 +216,12 @@ NetDeclaration ::= Type <<CSV IdentifierWithDefault>> !'('{
 IdentifierWithDefault ::= IDENTIFIER [ '=' Expression ] {
 }
 
-ContinuousAssign ::= assign <<CSV Assignment>> {
+ContinuousAssign ::= assign <<CSV ContinuousAssignItem>> {
     pin = 1
     recoverWhile = Semicolon_recover
 }
 
-Assignment ::= NetLvalue AssignOperator Expression {
+ContinuousAssignItem ::= NetLvalue AssignOperator Expression {
     pin = 2
     recoverWhile = CSV_recover
 }
@@ -243,15 +247,12 @@ AlwaysKeyword ::= always_comb | always_ff | always_latch | always
 
 Statement ::=
 
-    [ IDENTIFIER ':' ]
-    AttributeInstance *
-    StatementItem
-
-private StatementItem ::=
-
-      SeqBlock
-    | Assignment ';'
-    | ConditionalStmt
+    [ IDENTIFIER ':' ] AttributeInstance *
+    (
+          SeqBlock
+        | AssignmentStmt ';'
+        | ConditionalStmt
+    )
 
 SeqBlock ::=
 
@@ -268,6 +269,11 @@ BlockItem ::=
       TypeDeclaration
     | ParameterDeclaration
     ) ';'
+
+AssignmentStmt ::= NetLvalue AssignOperator Expression {
+    pin = 2
+    recoverWhile = Semicolon_recover
+}
 
 ConditionalStmt ::=
 

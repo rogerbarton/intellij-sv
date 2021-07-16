@@ -382,7 +382,8 @@ SimpleType ::= IntegerType | NonIntegerType | IDENTIFIER
 
 Expression ::=
 
-      UnaryExpr
+      ParenExpr
+    | UnaryExpr
     | BinaryExpr
     | IncDecExpr
     | TernaryExpr
@@ -414,6 +415,8 @@ PrimaryConst ::=
     | MultiConcatenationPrimaryConst {
         extends = ExpressionConst
     }
+
+ParenExpr ::= '(' Expression ')'
 
 UnaryExpr ::= UnaryOperator AttributeInstance* Primary
 

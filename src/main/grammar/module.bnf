@@ -16,35 +16,78 @@
     tokenTypeClass="ch.rbarton.intellijsv.core.psi.SvTokenType"
 
     tokens = [
-        LPARENSTAR  =  '(*'
-        RPARENSTAR  =  '*)'
+        LBRACE      = '{'
+        RBRACE      = '}'
+        LBRACK      = '['
+        RBRACK      = ']'
+        LPARENSTAR  = '(*'
+        LPAREN      = '('
+        RPARENSTAR  = '*)'
+        RPAREN      = ')'
 
-        LBRACE      =  '{'
-        RBRACE      =  '}'
-        LBRACK      =  '['
-        RBRACK      =  ']'
-        LPAREN      =  '('
-        RPAREN      =  ')'
+        COLONCOLON  = '::'
+        COLON       = ':'
+        SEMICOLON   = ';'
+        COMMA       = ','
 
-        COLON       =  ':'
-        COLONCOLON  =  '::'
-        SEMICOLON   =  ';'
-        COMMA       =  ','
+        SHA         = '#'
+        DOT         = '.'
+        UNDERSCORE  = '_'
 
-        EQ          =  '='
-        DIV         =  '/'
+        // Operators
+        EQEQQS      = '==?'
+        EQEQEQ      = '==='
+        EQEQ        = '=='
+        EQ          = '='
+        EXCLEQQS    = '!=?'
+        EXCLEQEQ    = '!=='
+        EXCLEQ      = '!='
+        EXCL        = '!'
 
-        SHA         =  '#'
-        DOT         =  '.'
-        UNDERSCORE  =  '_'
+        PLUSEQ      = '+='
+        PLUSPLUS    = '++'
+        PLUS        = '+'
+        MINUSEQ     = '-='
+        MINUSGT     = '->'
+        MINUSMINUS  = '--'
+        MINUS       = '-'
+        MULMUL      = '**'
+        MULEQ       = '*='
+        MUL         = '*'
+        DIVEQ       = '/='
+        DIV         = '/'
+        PCTEQ       = '%='
+        PCT         = '%'
 
-        GTGT      = ">>"
-        GTEQ      = ">="
-        LTLT      = "<<"
-        LTEQ      = "<="
-        OROR      = "||"
-        ANDAND    = "&&"
-        ANDANDAND = "&&&"
+        TILDAND     = '~&'
+        TILDOR      = '~|'
+        TILDHAT     = '~^'
+        TILD        = '~'
+        HATTILD     = '^~'
+        HATEQ         = '^='
+        HAT         = '^'
+
+        GTEQ        = '>='
+        GTGTGTEQ    = '>>>='
+        GTGTEQ      = '>>='
+        GTGTGT      = '>>>'
+        GTGT        = '>>'
+        GT          = '>'
+        LTEQ        = '<='
+        LTMINUSLT   = '<->'
+        LTLTLTEQ    = '<<<='
+        LTLTEQ      = '<<='
+        LTLTLT      = '<<<'
+        LTLT        = '<<'
+        LT          = '<'
+
+        OREQ        = '|='
+        OROR        = '||'
+        OR          = '|'
+        ANDEQ       = '&='
+        ANDANDAND   = '&&&'
+        ANDAND      = '&&'
+        AND         = '&'
 
         // Literals
         TIME_LITERAL    = "regexp:\d[_\d]*(s|ms|us|ns|ps|fs)"

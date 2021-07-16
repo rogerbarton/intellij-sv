@@ -31,6 +31,7 @@
         COMMA       = ','
 
         SHA         = '#'
+        SHASHA      = '##'
         DOT         = '.'
         UNDERSCORE  = '_'
 
@@ -83,11 +84,11 @@
 
         OREQ        = '|='
         OROR        = '||'
-        OR          = '|'
+        OR_         = '|'
         ANDEQ       = '&='
         ANDANDAND   = '&&&'
         ANDAND      = '&&'
-        AND         = '&'
+        AND_        = '&'
 
         // Literals
         TIME_LITERAL    = "regexp:\d[_\d]*(s|ms|us|ns|ps|fs)"
@@ -252,6 +253,7 @@ Statement ::=
           SeqBlock
         | AssignmentStmt ';'
         | ConditionalStmt
+        | TimingControlStmt
     )
 
 SeqBlock ::=
@@ -283,11 +285,54 @@ ConditionalStmt ::=
     ( else if '(' Expression ')'
         Statement ) *
     [ else
-        Statement ]{
+        Statement ] {
     pin = 2
     }
 
 UniquePriority ::= unique | unique0 | priority
+
+TimingControlStmt ::= ( EventControl | DelayControl | DelayCycle ) ( ';' | Statement )
+
+EventControl ::=
+
+    '@' (
+      '(' ( EventExpression | '*' )')'
+    | '*'
+    | HierarchicalIdentifier
+    ) {
+    pin = 1
+}
+
+DelayControl ::= '#' ( DelayLiteral | '(' Expression ')' ) {
+    pin = 1
+}
+
+DelayLiteral ::= UNSIGNED_NUMBER | TIME_LITERAL | IDENTIFIER | "1step"
+
+DelayCycle ::= '##' ( UNSIGNED_NUMBER | IDENTIFIER | '(' Expression ')' ) {
+    pin = 1
+}
+
+EventExpression ::=
+
+      ParenEventExpression
+    | BinaryEventExpression
+    | AtomicEventExpression
+
+AtomicEventExpression ::= [ EdgeIdentifier ] Expression [ iff Expression ] {
+    extends = EventExpression
+}
+
+BinaryEventExpression ::= EventExpression ( or | ',' ) EventExpression {
+    extends = EventExpression
+}
+
+ParenEventExpression ::= '(' EventExpression ')' {
+    extends = EventExpression
+}
+
+
+EdgeIdentifier ::= posedge | negedge | edge
 
 // Module Instantiation
 
@@ -387,9 +432,7 @@ Expression ::=
     | BinaryExpr
     | IncDecExpr
     | TernaryExpr
-    | Primary {
-//        extends = Predicate
-    }
+    | Primary
 
 ExpressionConst ::=
 

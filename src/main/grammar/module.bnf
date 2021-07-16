@@ -74,7 +74,8 @@ SvFile ::= [ (TimeunitsDeclaration ';' )* ] ModuleDeclaration *
 private Statement_recover ::= !';'
 private CSV_recover ::= !(';' | ',' | ')' | '*)')   // Must include comma
 
-private meta CSV ::= <<param>> ( ',' <<param>> )* ','?
+private meta CSV ::= <<XSV <<item>> ','>>
+private meta XSV ::= <<item>> ( <<sep>> <<item>> )* <<sep>>?
 
 
 // Trivial Rules

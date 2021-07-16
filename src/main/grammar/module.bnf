@@ -108,7 +108,9 @@
 
     generateTokenAccessors=true
 
-    consumeTokenMethod("((?!.*_with_recover).*_recover)") = "consumeTokenFast"
+    extends(".*Expr") = Expression
+    extends(".*ExprConst") = ExpressionConst
+    consumeTokenMethod("((?!.*_with_recover).*_recover|Primary)") = "consumeTokenFast"
 }
 
 SvFile ::= [ (TimeunitsDeclaration ';' )* ] ModuleDeclaration *
@@ -270,9 +272,9 @@ BlockItem ::=
 ConditionalStmt ::=
 
     [ UniquePriority ]
-    if '(' Predicate ')'
+    if '(' Expression ')'
         Statement
-    ( else if '(' Predicate ')'
+    ( else if '(' Expression ')'
         Statement ) *
     [ else
         Statement ]{
@@ -280,8 +282,6 @@ ConditionalStmt ::=
     }
 
 UniquePriority ::= unique | unique0 | priority
-
-Predicate ::= <<XSV Expression '&&&'>>
 
 // Module Instantiation
 
@@ -380,28 +380,34 @@ Expression ::=
     | BinaryExpr
     | IncDecExpr
     | TernaryExpr
-    | Primary
+    | Primary {
+//        extends = Predicate
+    }
 
 ExpressionConst ::=
 
-      PrimaryConst
-    | UnaryExprConst
+      UnaryExprConst
     | BinaryExprConst
     | TernaryExprConst
+    | PrimaryConst
 
 Primary ::=
 
       Literal
     | HierarchicalIdentifier
-    | ConcatenationExpr
-    | MultiConcatenationExpr
-    | Cast
+    | ConcatenationPrimary
+    | MultiConcatenationPrimary
+    | Cast {
+        extends = Expression
+    }
 
 PrimaryConst ::=
 
       Literal
-    | ConcatenationExprConst
-    | MultiConcatenationExprConst
+    | ConcatenationPrimaryConst
+    | MultiConcatenationPrimaryConst {
+        extends = ExpressionConst
+    }
 
 UnaryExpr ::= UnaryOperator AttributeInstance* Primary
 
@@ -411,7 +417,7 @@ BinaryExpr ::= Expression BinaryOperator AttributeInstance * Expression
 
 BinaryExprConst ::= ExpressionConst BinaryOperator AttributeInstance * ExpressionConst
 
-TernaryExpr ::= Predicate '?' AttributeInstance * Expression ':' Expression
+TernaryExpr ::= Expression '?' AttributeInstance * Expression ':' Expression
 
 TernaryExprConst ::= ExpressionConst '?' AttributeInstance * ExpressionConst ':' ExpressionConst
 
@@ -423,14 +429,13 @@ Cast ::= CastingType "'" '(' Expression ')'
 
 CastingType ::= Signing | string | const | PrimaryConst | SimpleType
 
+ConcatenationPrimary ::= '{' <<CSV Expression>> '}'
 
-ConcatenationExpr ::= '{' <<CSV Expression>> '}'
+ConcatenationPrimaryConst ::= '{' <<CSV ExpressionConst>> '}'
 
-ConcatenationExprConst ::= '{' <<CSV ExpressionConst>> '}'
+MultiConcatenationPrimary ::= '{'  '}'
 
-MultiConcatenationExpr ::= '{'  '}'
-
-MultiConcatenationExprConst ::= '{' ExpressionConst ConcatenationExprConst '}'
+MultiConcatenationPrimaryConst ::= '{' ExpressionConst ConcatenationPrimaryConst '}'
 
 HierarchicalIdentifier ::= [ "$root" '.' ] ( IDENTIFIER BitSelectConst * '.' ) * IDENTIFIER
 
@@ -449,6 +454,7 @@ BinaryOperator ::=
     | '&'  | '|'  | '^'   | '^~'  | '~^'
     | '>>' | '<<' | '>>>' | '<<<'
     | '->' | '<->'
+    | '&&&' // predicate
 
 IncDecOperator ::= '++' | '--'
 

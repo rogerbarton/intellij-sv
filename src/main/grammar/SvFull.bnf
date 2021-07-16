@@ -572,7 +572,7 @@ data_declaration ::=
 
 package_import_declaration ::= "import" package_import_item { "," package_import_item } ";"
 
-package_import_item ::= package_identifier "::" identifier | package_identifier ":: "*
+package_import_item ::= package_identifier "::" identifier | package_identifier "::" "*"
 
 package_export_declaration ::= "export *::* ;" | "export" package_import_item { "," package_import_item } ";"
 
@@ -1065,7 +1065,7 @@ sequence_abbrev ::= consecutive_repetition
 
 consecutive_repetition ::=
 
-      "["* const_or_range_expression "]"
+      "[*" const_or_range_expression "]"
     | "[*]"
     | "[+]"
 
@@ -1158,7 +1158,7 @@ trans_set ::= trans_range_list { "=>" trans_range_list }
 trans_range_list ::=
 
       trans_item
-    | trans_item "["* repeat_range "]"
+    | trans_item "[*" repeat_range "]"
     | trans_item "[-->" repeat_range "]"
     | trans_item "[=" repeat_range "]"
 
@@ -1611,8 +1611,8 @@ event_control ::=
 
       "@" hierarchical_event_identifier
     | "@ (" event_expression ")"
-    | "@"*
-    | "@ (*)"
+    | "@" "*"
+    | "@" "(*)"
     | "@" ps_or_hierarchical_sequence_identifier
 
 event_expression ::=
@@ -1711,7 +1711,7 @@ open_value_range ::= value_range
 pattern ::=
 
     "." variable_identifier
-    | "."*
+    | ".*"
     | constant_expression
     | "tagged" member_identifier [ pattern ]
     | "'{" pattern { "," pattern } "}"
@@ -2459,7 +2459,8 @@ primary ::=
     | "(" mintypmax_expression ")"
     | cast
     | assignment_pattern_expression
-    | streaming_concatenation | sequence_method_call
+    | streaming_concatenation
+    | sequence_method_call
     | "this"
     | "~$~"
     | "null"

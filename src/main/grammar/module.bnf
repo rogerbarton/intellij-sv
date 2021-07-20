@@ -156,7 +156,9 @@ ModuleDeclaration ::=
     ModuleItem *
     endmodule [ ':' Label ] {
     pin = 3
-    implements = "ch.rbarton.intellijsv.core.psi.ext.SvNamedIdentifierOwner"
+    implements = [ "ch.rbarton.intellijsv.core.psi.ext.SvNamedIdentifierOwner"
+                   "ch.rbarton.intellijsv.core.psi.ext.SvReferenceElement"
+                    ]
     mixin = "ch.rbarton.intellijsv.core.psi.mixin.SvModuleDeclarationMixin"
     methods = [
         endmoduleLabel = "Label"

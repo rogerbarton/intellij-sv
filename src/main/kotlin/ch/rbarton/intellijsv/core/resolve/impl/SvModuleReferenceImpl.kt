@@ -1,12 +1,11 @@
 package ch.rbarton.intellijsv.core.resolve.impl
 
 import ch.rbarton.intellijsv.core.SvIcons
-import ch.rbarton.intellijsv.core.psi.SvModuleInstantiation
 import ch.rbarton.intellijsv.core.psi.SvUtil
-import ch.rbarton.intellijsv.core.resolve.SvReference
+import ch.rbarton.intellijsv.core.psi.ext.SvReferenceElement
+import ch.rbarton.intellijsv.core.resolve.SvPolyReference
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementResolveResult
 import com.intellij.psi.ResolveResult
@@ -14,12 +13,14 @@ import com.intellij.psi.ResolveResult
 /**
  * Defines how to resolve a reference to a Module
  */
-class SvModuleReferenceImpl(element: SvModuleInstantiation, textRange: TextRange) :
-    SvReference<SvModuleInstantiation>(element, textRange)
+class SvModuleReferenceImpl(element: SvReferenceElement) : SvPolyReference<SvReferenceElement>(element)
 {
-    override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> =
-        SvUtil.findModuleIdentifiers(myElement.project, myElement.moduleIdentifier.text)
+    override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult>
+    {
+        if (myElement?.referenceElement == null) return ResolveResult.EMPTY_ARRAY
+        return SvUtil.findModuleIdentifiers(myElement.project, myElement.referenceElement!!.text)
             .map { PsiElementResolveResult(it.identifier) }.toTypedArray()
+    }
 
     override fun resolve(): PsiElement?
     {

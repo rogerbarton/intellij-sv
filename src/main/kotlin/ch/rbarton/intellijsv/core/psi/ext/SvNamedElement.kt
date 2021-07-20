@@ -9,10 +9,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.PsiNamedElement
 
-interface SvNamedElement : PsiNamedElement, NavigatablePsiElement
-
 // More advanced NamedElement
-interface SvNamedIdentifierOwner : SvNamedElement, PsiNameIdentifierOwner
+interface SvNamedIdentifierOwner : PsiNameIdentifierOwner, NavigatablePsiElement
 
 abstract class SvNameIdentifierOwnerImpl(node: ASTNode) : SvNamedIdentifierOwner, ASTWrapperPsiElement(node) {
 

@@ -12,5 +12,7 @@ import com.intellij.psi.PsiReference
  */
 abstract class SvModuleInstantiationMixin(node: ASTNode) : SvModuleInstantiation, ASTWrapperPsiElement(node)
 {
-    override fun getReference(): PsiReference? = SvModuleReferenceImpl(this, moduleIdentifier.textRangeInParent)
+    // -- SvReferenceElement Impl
+    override val referenceElement: PsiElement get() = moduleIdentifier
+    override fun getReference(): PsiReference = SvModuleReferenceImpl(this)
 }

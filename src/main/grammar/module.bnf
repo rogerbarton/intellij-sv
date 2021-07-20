@@ -4,7 +4,7 @@
 
     extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
     // Use extension methods instead so we can use kotlin, see https://github.com/JetBrains/Grammar-Kit/issues/70
-     psiImplUtilClass="ch.rbarton.intellijsv.core.psi.impl.SvPsiImplUtil"
+     psiImplUtilClass="ch.rbarton.intellijsv.core.psi.mixin.SvPsiImplUtil"
 
     psiClassPrefix="Sv"
     psiImplClassSuffix="Impl"

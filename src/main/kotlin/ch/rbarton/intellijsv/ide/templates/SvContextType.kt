@@ -2,9 +2,9 @@ package ch.rbarton.intellijsv.ide.templates
 
 import ch.rbarton.intellijsv.SvLanguage
 import ch.rbarton.intellijsv.core.SvSyntaxHighlighter
-import ch.rbarton.intellijsv.core.psi.SvConstantExpression
+import ch.rbarton.intellijsv.core.psi.SvExpression
 import ch.rbarton.intellijsv.core.psi.SvModuleDeclaration
-import ch.rbarton.intellijsv.core.psi.SvParameterPortDeclaration
+import ch.rbarton.intellijsv.core.psi.SvParameterDeclaration
 import ch.rbarton.intellijsv.core.psi.SvPortDeclaration
 import com.intellij.codeInsight.template.EverywhereContextType
 import com.intellij.codeInsight.template.TemplateActionContext
@@ -49,7 +49,7 @@ sealed class SvContextType(
     companion object
     {
         private fun owner(element: PsiElement): PsiElement? = PsiTreeUtil.findFirstParent(element) {
-            it is SvModuleDeclaration || it is SvPortDeclaration || it is SvParameterPortDeclaration || it is SvConstantExpression
+            it is SvModuleDeclaration || it is SvPortDeclaration || it is SvParameterDeclaration || it is SvExpression
         }
     }
 }

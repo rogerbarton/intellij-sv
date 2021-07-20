@@ -43,6 +43,6 @@ class SvParserDefinition : ParserDefinition
 
     companion object
     {
-        val FILE: IFileElementType = IFileElementType(SvLanguage);
+        val FILE: IFileElementType = IFileElementType(SvLanguage)
     }
 }

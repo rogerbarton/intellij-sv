@@ -13,6 +13,6 @@ class SvChooseByNameContributor : ChooseByNameContributor
 
     override fun getItemsByName(
         name: String?, pattern: String?, project: Project, includeNonProjectItems: Boolean
-    ): Array<NavigationItem> = SvUtil.findModuleIdentifiers(project, name).map { it as NavigationItem }.toTypedArray()
+    ): Array<NavigationItem> = SvUtil.findModuleIdentifiers(project, name).toTypedArray()
 
 }

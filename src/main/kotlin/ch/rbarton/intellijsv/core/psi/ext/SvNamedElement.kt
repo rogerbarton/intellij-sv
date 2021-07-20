@@ -11,9 +11,10 @@ import com.intellij.psi.PsiNamedElement
 
 interface SvNamedElement : PsiNamedElement, NavigatablePsiElement
 
+// More advanced NamedElement
 interface SvNamedIdentifierOwner : SvNamedElement, PsiNameIdentifierOwner
 
-abstract class SvNamedElementImpl(node: ASTNode) : SvNamedIdentifierOwner, ASTWrapperPsiElement(node) {
+abstract class SvNameIdentifierOwnerImpl(node: ASTNode) : SvNamedIdentifierOwner, ASTWrapperPsiElement(node) {
 
     override fun getNameIdentifier(): PsiElement? = findChildByType(IDENTIFIER)
 

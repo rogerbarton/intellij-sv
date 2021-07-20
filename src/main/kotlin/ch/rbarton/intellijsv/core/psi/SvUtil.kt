@@ -18,7 +18,7 @@ class SvUtil
 
             for(virtualFile: VirtualFile in virtualFiles)
             {
-                val svFile: SvFile = PsiManager.getInstance(project).findFile(virtualFile) as SvFile ?: continue
+                val svFile: SvFile = PsiManager.getInstance(project).findFile(virtualFile) as SvFile
                 val moduleDecls: Array<SvModuleDeclaration> = PsiTreeUtil.getChildrenOfType(svFile, SvModuleDeclaration::class.java) ?: continue
 
                 if (id == null)

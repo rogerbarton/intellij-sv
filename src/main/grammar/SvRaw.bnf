@@ -6,7 +6,7 @@
     psiClassPrefix="Sv"
     psiImplClassSuffix="Impl"
     psiPackage="ch.rbarton.intellijsv.core.psi"
-    psiImplPackage="ch.rbarton.intellijsv.core.psi.impl"
+    psiImplPackage="ch.rbarton.intellijsv.core.psi.ext"
 
     elementTypeHolderClass="ch.rbarton.intellijsv.core.psi.SvTypes"
     elementTypeClass="ch.rbarton.intellijsv.core.psi.SvElementType"

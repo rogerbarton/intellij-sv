@@ -13,13 +13,18 @@
 
         <lang.parserDefinition language="System Verilog"
                                implementationClass="ch.rbarton.intellijsv.core.psi.SvParserDefinition"/>
+        <lang.refactoringSupport language="System Verilog"
+                                 implementationClass="ch.rbarton.intellijsv.ide.refactor.SvRefactoringSupportProvider"/>
+        <lang.commenter language="System Verilog" implementationClass="ch.rbarton.intellijsv.ide.SvCommenter"/>
 
         <lang.syntaxHighlighterFactory language="System Verilog"
                                        implementationClass="ch.rbarton.intellijsv.core.SvSyntaxHighlighterFactory"/>
         <colorSettingsPage implementation="ch.rbarton.intellijsv.ide.colors.SvColorSettingsPage"/>
 
-        <lang.commenter language="System Verilog" implementationClass="ch.rbarton.intellijsv.ide.SvCommenter"/>
-        <completion.contributor language="System Verilog" implementationClass="ch.rbarton.intellijsv.ide.SvCompletionContributor"/>
+
+        <completion.contributor language="System Verilog"
+                                implementationClass="ch.rbarton.intellijsv.ide.SvCompletionContributor"/>
+
         <gotoSymbolContributor implementation="ch.rbarton.intellijsv.core.psi.SvChooseByNameContributor"/>
 
         <defaultLiveTemplates file="liveTemplates/liveTemplates.xml"/>

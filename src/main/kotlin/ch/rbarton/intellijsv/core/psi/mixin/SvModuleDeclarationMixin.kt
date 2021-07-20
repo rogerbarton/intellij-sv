@@ -8,7 +8,9 @@ import com.intellij.navigation.ItemPresentation
 import com.intellij.psi.PsiElement
 import javax.swing.Icon
 
-abstract class SvModuleDeclarationMixin(node: ASTNode): SvModuleDeclaration, SvNameIdentifierOwnerImpl(node) {
+abstract class SvModuleDeclarationMixin(node: ASTNode) : SvModuleDeclaration, SvNameIdentifierOwnerImpl(node)
+{
+
     override fun getNameIdentifier(): PsiElement = identifier
 
     override fun getPresentation(): ItemPresentation

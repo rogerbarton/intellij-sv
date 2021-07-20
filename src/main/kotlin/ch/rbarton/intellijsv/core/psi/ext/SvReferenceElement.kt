@@ -8,7 +8,5 @@ import com.intellij.psi.PsiReference
  */
 interface SvReferenceElement : PsiElement
 {
-    val referenceNameElement: PsiElement?
-
     override fun getReference(): PsiReference?
 }

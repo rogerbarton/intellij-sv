@@ -24,7 +24,7 @@ class SvUtil
                 if (id == null)
                     result += moduleDecls
                 else
-                    result += moduleDecls.filter { it.identifier.equals(id) }.toList()
+                    result += moduleDecls.filter { it.identifier.text.equals(id) }.toList()
             }
             return result
         }

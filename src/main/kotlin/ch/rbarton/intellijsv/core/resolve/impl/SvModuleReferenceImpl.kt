@@ -6,6 +6,7 @@ import ch.rbarton.intellijsv.core.psi.SvUtil
 import ch.rbarton.intellijsv.core.resolve.SvReference
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementResolveResult
 import com.intellij.psi.ResolveResult
@@ -13,11 +14,12 @@ import com.intellij.psi.ResolveResult
 /**
  * Defines how to resolve a reference to a Module
  */
-class SvModuleReferenceImpl(private val element: SvModuleInstantiation) :
-    SvReference(element.moduleIdentifier, element.moduleIdentifier.textRange)
+class SvModuleReferenceImpl(element: SvModuleInstantiation, textRange: TextRange) :
+    SvReference<SvModuleInstantiation>(element, textRange)
 {
     override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> =
-        SvUtil.findModuleIdentifiers(myElement.project, element.text).map { PsiElementResolveResult(it) }.toTypedArray()
+        SvUtil.findModuleIdentifiers(myElement.project, myElement.moduleIdentifier.text)
+            .map { PsiElementResolveResult(it.identifier) }.toTypedArray()
 
     override fun resolve(): PsiElement?
     {

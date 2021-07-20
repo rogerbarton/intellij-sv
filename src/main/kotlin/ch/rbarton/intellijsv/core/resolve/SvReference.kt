@@ -11,8 +11,8 @@ import com.intellij.psi.PsiPolyVariantReferenceBase
  * PolyVariant means a reference can resolve to multiple targets.
  * We have an Impl class for each kind of reference we can resolve, e.g. to a module or variable.
  */
-abstract class SvReference(element: PsiElement, textRange: TextRange) :
-    PsiPolyVariantReferenceBase<PsiElement>(element, textRange), PsiPolyVariantReference
+abstract class SvReference<T : PsiElement>(element: T, textRange: TextRange) :
+    PsiPolyVariantReferenceBase<T>(element, textRange), PsiPolyVariantReference
 {
     override fun getVariants(): Array<out LookupElement> = LookupElement.EMPTY_ARRAY
 }

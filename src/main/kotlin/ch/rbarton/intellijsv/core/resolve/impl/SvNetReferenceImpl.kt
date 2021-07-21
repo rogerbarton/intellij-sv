@@ -29,8 +29,8 @@ class SvNetReferenceImpl(element: SvReferenceElement) : SvPolyReference<SvRefere
             ?: return ResolveResult.EMPTY_ARRAY
 
         val portDecls =
-            SvUtil.findPortIdentifiers(parentModule, queryId).map { PsiElementResolveResult(it.identifier!!) }
-        val netDecls = SvUtil.findNetIdentifiers(parentModule, queryId).map { PsiElementResolveResult(it.second) }
+            SvUtil.findPortNetIdentifiers(parentModule, queryId).map { PsiElementResolveResult(it.identifier!!) }
+        val netDecls = SvUtil.findInnerNetIdentifiers(parentModule, queryId).map { PsiElementResolveResult(it.second) }
 
         return (portDecls + netDecls).toTypedArray()
     }
@@ -42,10 +42,10 @@ class SvNetReferenceImpl(element: SvReferenceElement) : SvPolyReference<SvRefere
         val parentModule: SvModuleDeclaration = PsiTreeUtil.getParentOfType(myElement, SvModuleDeclaration::class.java)
             ?: return LookupElement.EMPTY_ARRAY
 
-        SvUtil.findPortIdentifiers(parentModule, null).forEach {
+        SvUtil.findPortNetIdentifiers(parentModule, null).forEach {
             variants += LookupElementBuilder.create(it).withIcon(SvIcons.SV_NET)
         }
-        SvUtil.findNetIdentifiers(parentModule, null).forEach {
+        SvUtil.findInnerNetIdentifiers(parentModule, null).forEach {
             variants += LookupElementBuilder.create(it).withIcon(SvIcons.SV_NET)
         }
 

@@ -215,13 +215,17 @@ ModuleItem ::=
     | TimeunitsDeclaration ';'
     | ModuleDeclaration
 
-NetDeclaration ::= Type <<CSV IdentifierWithDefault>> !'('{
+NetDeclaration ::= Type <<CSV NetDeclarationAssignment>> !'('{
     pin = 1
     recoverWhile = Semicolon_recover
 }
 
-IdentifierWithDefault ::= IDENTIFIER [ '=' Expression ] {
+NetDeclarationAssignment ::= IDENTIFIER UnpackedDimension * [ '=' Expression ] {
+    implements = [ "ch.rbarton.intellijsv.core.psi.ext.SvNamedIdentifierOwner" ]
+    extends = "ch.rbarton.intellijsv.core.psi.mixin.SvNetDeclarationAssignmentMixin"
 }
+
+IdentifierWithDefault ::= IDENTIFIER [ '=' Expression ]
 
 ContinuousAssign ::= assign <<CSV ContinuousAssignItem>> {
     pin = 1

@@ -42,22 +42,42 @@ class SvUtil
             }
         }
 
-        fun findNetIdentifiers(containingModule: SvModuleDeclaration, query: String? = null): List<Pair<SvNetDeclaration, PsiElement>>
+        fun findPortNetIdentifiers(
+            containingModule: SvModuleDeclaration,
+            query: String? = null
+        ): List<SvPortDeclaration>
+        {
+            if (containingModule.moduleHeader == null) return emptyList()
+
+            return containingModule.moduleHeader!!.portDeclarationList.filter {
+                it.identifier?.text.equals(query)
+            }
+        }
+
+        fun findInnerNetIdentifiers(
+            containingModule: SvModuleDeclaration,
+            query: String? = null
+        ): List<Pair<SvNetDeclaration, PsiElement>>
         {
             val result: MutableList<Pair<SvNetDeclaration, PsiElement>> = mutableListOf()
 
             // Get NetDeclarations with a valid containing identifier, note: it may have multiple
-            val validNetDecls: List<SvNetDeclaration> =
+            val validDecls: List<SvNetDeclaration> =
                 containingModule.moduleItemList.filter {
                     it.netDeclaration != null
-                        && it.netDeclaration!!.identifierWithDefaultList.any { idd -> idd.identifier.text.equals(query) }
+                            && it.netDeclaration!!.netDeclarationAssignmentList.any { idd ->
+                        idd.identifier.text.equals(
+                            query
+                        )
+                    }
                 }.map { it.netDeclaration!! }
 
             // Extract NetDecl and Identifier pairs
-            for (decl in validNetDecls) {
-                for(identifierWithDefault in decl.identifierWithDefaultList)
+            for (decl in validDecls)
+            {
+                for (identifierWithDefault in decl.netDeclarationAssignmentList)
                 {
-                    if(identifierWithDefault.identifier.text.equals(query))
+                    if (identifierWithDefault.identifier.text.equals(query))
                         result += Pair(decl, identifierWithDefault.identifier)
                 }
             }

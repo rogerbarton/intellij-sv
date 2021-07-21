@@ -1,6 +1,6 @@
 package ch.rbarton.intellijsv.core.psi.ext
 
-import ch.rbarton.intellijsv.core.SvIcons
+import ch.rbarton.intellijsv.ide.SvIcons
 import ch.rbarton.intellijsv.core.psi.SvPsiFactory
 import ch.rbarton.intellijsv.core.psi.SvTypes.IDENTIFIER
 import com.intellij.extapi.psi.ASTWrapperPsiElement
@@ -10,7 +10,6 @@ import com.intellij.navigation.ItemPresentation
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
-import com.intellij.psi.PsiNamedElement
 
 // More advanced NamedElement
 interface SvNamedIdentifierOwner : PsiNameIdentifierOwner, NavigatablePsiElement

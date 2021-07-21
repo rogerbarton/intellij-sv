@@ -1,7 +1,7 @@
 package ch.rbarton.intellijsv.ide.templates
 
 import ch.rbarton.intellijsv.SvLanguage
-import ch.rbarton.intellijsv.core.SvSyntaxHighlighter
+import ch.rbarton.intellijsv.ide.SvSyntaxHighlighter
 import ch.rbarton.intellijsv.core.psi.SvExpression
 import ch.rbarton.intellijsv.core.psi.SvModuleDeclaration
 import ch.rbarton.intellijsv.core.psi.SvParameterDeclaration

@@ -1,6 +1,6 @@
 package ch.rbarton.intellijsv.core.psi.mixin
 
-import ch.rbarton.intellijsv.core.SvIcons
+import ch.rbarton.intellijsv.ide.SvIcons
 import ch.rbarton.intellijsv.core.psi.SvModuleDeclaration
 import ch.rbarton.intellijsv.core.psi.ext.SvNameIdentifierOwnerImpl
 import ch.rbarton.intellijsv.core.psi.ext.SvReferenceElement

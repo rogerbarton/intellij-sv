@@ -1,9 +1,9 @@
-package ch.rbarton.intellijsv.core.psi
+package ch.rbarton.intellijsv.ide
 
+import ch.rbarton.intellijsv.core.psi.SvUtil
 import com.intellij.navigation.ChooseByNameContributor
 import com.intellij.navigation.NavigationItem
 import com.intellij.openapi.project.Project
-import com.intellij.util.castSafelyTo
 import com.intellij.util.containers.toArray
 
 class SvChooseByNameContributor : ChooseByNameContributor

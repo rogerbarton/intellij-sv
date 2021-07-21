@@ -1,11 +1,12 @@
 package ch.rbarton.intellijsv.ide.colors
 
-import ch.rbarton.intellijsv.core.SvIcons
-import ch.rbarton.intellijsv.core.SvSyntaxHighlighter
+import ch.rbarton.intellijsv.ide.SvIcons
+import ch.rbarton.intellijsv.ide.SvSyntaxHighlighter
 import com.intellij.openapi.options.colors.AttributesDescriptor
 import com.intellij.openapi.options.colors.ColorDescriptor
 import com.intellij.openapi.options.colors.ColorSettingsPage
 import com.intellij.openapi.util.io.StreamUtil
+import java.nio.charset.Charset
 
 class SvColorSettingsPage : ColorSettingsPage
 {
@@ -26,7 +27,8 @@ class SvColorSettingsPage : ColorSettingsPage
         private val DEMO_TEXT: String by lazy {
             val stream = SvColorSettingsPage::class.java.classLoader
                 .getResourceAsStream("ch.rbarton.intellijsv.ide/colors/HighlighterDemo.sv")
-            StreamUtil.convertSeparators(StreamUtil.readText(stream, "UTF-8"))
+                ?: return@lazy "Failed to find demo file."
+            StreamUtil.convertSeparators(StreamUtil.readText(stream.reader(Charset.defaultCharset())))
         }
     }
 }

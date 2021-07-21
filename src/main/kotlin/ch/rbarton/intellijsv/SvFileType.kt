@@ -1,6 +1,6 @@
 package ch.rbarton.intellijsv
 
-import ch.rbarton.intellijsv.core.SvIcons
+import ch.rbarton.intellijsv.ide.SvIcons
 import com.intellij.openapi.fileTypes.LanguageFileType
 
 class SvFileType : LanguageFileType(SvLanguage)
@@ -11,6 +11,7 @@ class SvFileType : LanguageFileType(SvLanguage)
 
     override fun getDefaultExtension() = "sv"
 
+    @Suppress("DialogTitleCapitalization")
     override fun getDescription() = "System Verilog HDL File"
 
     companion object

@@ -1,4 +1,4 @@
-package ch.rbarton.intellijsv.core
+package ch.rbarton.intellijsv.ide
 
 import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory
 import com.intellij.openapi.vfs.VirtualFile

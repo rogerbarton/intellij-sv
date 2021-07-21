@@ -1,9 +1,11 @@
-package ch.rbarton.intellijsv.core.psi
+package ch.rbarton.intellijsv.core.parser
 
 import ch.rbarton.intellijsv.SvLanguage
 import ch.rbarton.intellijsv.core.lexer.SvLexer
 import com.intellij.lang.ParserDefinition
-import ch.rbarton.intellijsv.core.parser.SvParser
+import ch.rbarton.intellijsv.core.psi.SV_COMMENTS
+import ch.rbarton.intellijsv.core.psi.SV_STRING_LITERALS
+import ch.rbarton.intellijsv.core.psi.SvFile
 import ch.rbarton.intellijsv.core.psi.SvTypes.*
 import com.intellij.psi.tree.TokenSet
 import com.intellij.lang.ASTNode

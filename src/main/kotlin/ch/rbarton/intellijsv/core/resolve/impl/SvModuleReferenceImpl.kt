@@ -1,6 +1,6 @@
 package ch.rbarton.intellijsv.core.resolve.impl
 
-import ch.rbarton.intellijsv.core.SvIcons
+import ch.rbarton.intellijsv.ide.SvIcons
 import ch.rbarton.intellijsv.core.psi.SvModuleDeclaration
 import ch.rbarton.intellijsv.core.psi.SvUtil
 import ch.rbarton.intellijsv.core.psi.ext.SvReferenceElement

@@ -12,20 +12,20 @@
                   fieldName="INSTANCE" language="System Verilog" extensions="sv"/>
 
         <lang.parserDefinition language="System Verilog"
-                               implementationClass="ch.rbarton.intellijsv.core.psi.SvParserDefinition"/>
+                               implementationClass="ch.rbarton.intellijsv.core.parser.SvParserDefinition"/>
         <lang.refactoringSupport language="System Verilog"
                                  implementationClass="ch.rbarton.intellijsv.ide.refactor.SvRefactoringSupportProvider"/>
         <lang.commenter language="System Verilog" implementationClass="ch.rbarton.intellijsv.ide.SvCommenter"/>
 
         <lang.syntaxHighlighterFactory language="System Verilog"
-                                       implementationClass="ch.rbarton.intellijsv.core.SvSyntaxHighlighterFactory"/>
+                                       implementationClass="ch.rbarton.intellijsv.ide.SvSyntaxHighlighterFactory"/>
         <colorSettingsPage implementation="ch.rbarton.intellijsv.ide.colors.SvColorSettingsPage"/>
 
 
         <completion.contributor language="System Verilog"
                                 implementationClass="ch.rbarton.intellijsv.ide.SvCompletionContributor"/>
 
-        <gotoSymbolContributor implementation="ch.rbarton.intellijsv.core.psi.SvChooseByNameContributor"/>
+        <gotoSymbolContributor implementation="ch.rbarton.intellijsv.ide.SvChooseByNameContributor"/>
 
         <defaultLiveTemplates file="liveTemplates/liveTemplates.xml"/>
         <liveTemplateContext implementation="ch.rbarton.intellijsv.ide.templates.SvContextType$Generic"/>

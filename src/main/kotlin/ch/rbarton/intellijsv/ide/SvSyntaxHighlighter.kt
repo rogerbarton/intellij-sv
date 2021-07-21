@@ -1,4 +1,4 @@
-package ch.rbarton.intellijsv.core
+package ch.rbarton.intellijsv.ide
 
 import ch.rbarton.intellijsv.core.lexer.SvLexer
 import ch.rbarton.intellijsv.ide.colors.SvColor

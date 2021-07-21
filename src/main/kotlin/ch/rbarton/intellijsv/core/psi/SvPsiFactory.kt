@@ -4,7 +4,6 @@ import ch.rbarton.intellijsv.SvFileType
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.util.descendantsOfType
 
 class SvPsiFactory(private val project: Project)
 {

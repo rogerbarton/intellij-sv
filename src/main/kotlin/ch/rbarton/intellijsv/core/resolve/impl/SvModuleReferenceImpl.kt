@@ -1,6 +1,7 @@
 package ch.rbarton.intellijsv.core.resolve.impl
 
 import ch.rbarton.intellijsv.core.SvIcons
+import ch.rbarton.intellijsv.core.psi.SvModuleDeclaration
 import ch.rbarton.intellijsv.core.psi.SvUtil
 import ch.rbarton.intellijsv.core.psi.ext.SvReferenceElement
 import ch.rbarton.intellijsv.core.resolve.SvPolyReference
@@ -32,8 +33,13 @@ class SvModuleReferenceImpl(element: SvReferenceElement) : SvPolyReference<SvRef
     {
         val variants: MutableList<LookupElement> = mutableListOf()
         SvUtil.findModuleIdentifiers(myElement.project).forEach {
-            variants += LookupElementBuilder.create(it).withIcon(SvIcons.SV_FILE).withTypeText(it.containingFile.text)
+            variants += LookupElementBuilder.create(it.identifier).withIcon(SvIcons.SV_MODULE).withTypeText(it.containingFile.text)
         }
         return variants.toTypedArray()
     }
+
+    override fun isReferenceTo(element: PsiElement): Boolean =
+        element is SvModuleDeclaration && super.isReferenceTo(element)
+
+    // TODO: ensure rename also renames references
 }

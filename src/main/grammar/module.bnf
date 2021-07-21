@@ -179,6 +179,8 @@ ParameterDeclaration ::= ParameterType Type IDENTIFIER UnpackedDimension * [ '='
     pin = 1
     recoverWhile = CSV_recover
     methods = [ defaultValue = "Expression" ]
+    implements = [ "ch.rbarton.intellijsv.core.psi.ext.SvNamedIdentifierOwner" ]
+    extends = "ch.rbarton.intellijsv.core.psi.mixin.SvParameterDeclarationMixin"
 }
 
 ParameterType ::= parameter | localparam
@@ -187,10 +189,12 @@ ParameterType ::= parameter | localparam
 
 PortDeclaration ::=
 
-    AttributeInstance *  PortDirection Type IDENTIFIER [ '=' ExpressionConst ] {
+    AttributeInstance * PortDirection Type IDENTIFIER [ '=' ExpressionConst ] {
     pin = 2
-    methods = [ defaultValue = "ExpressionConst" ]
     recoverWhile = CSV_recover
+    methods = [ defaultValue = "ExpressionConst" ]
+    implements = [ "ch.rbarton.intellijsv.core.psi.ext.SvNamedIdentifierOwner" ]
+    extends = "ch.rbarton.intellijsv.core.psi.mixin.SvPortDeclarationMixin"
     }
 
 PortDirection ::= input | output | inout | ref
@@ -227,6 +231,8 @@ ContinuousAssign ::= assign <<CSV ContinuousAssignItem>> {
 ContinuousAssignItem ::= NetLvalue AssignOperator Expression {
     pin = 2
     recoverWhile = CSV_recover
+    implements = [ "ch.rbarton.intellijsv.core.psi.ext.SvReferenceElement" ]
+    mixin = "ch.rbarton.intellijsv.core.psi.mixin.SvContinuousAssignItemMixin"
 }
 
 NetLvalue ::= HierarchicalIdentifier UnpackedDimension *

@@ -16,7 +16,7 @@ fun tokenSetOf(vararg tokens: IElementType) = TokenSet.create(*tokens)
 val SV_KEYWORDS = tokenSetOf(
     TIMEUNIT, TIMEPRECISION,
     MODULE, ENDMODULE,
-    PARAMETER, LOCALPARAM
+    PARAMETER, LOCALPARAM, ASSIGN
 )
 
 val SV_PORT_DIRECTION = tokenSetOf(

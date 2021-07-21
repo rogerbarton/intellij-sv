@@ -84,5 +84,36 @@ class SvUtil
 
             return result
         }
+
+        fun findPortParameterIdentifiers(
+            containingModule: SvModuleDeclaration,
+            query: String? = null
+        ): List<SvParameterDeclaration>
+        {
+            if (containingModule.moduleHeader == null) return emptyList()
+
+            return containingModule.moduleHeader!!.parameterDeclarationList.filter {
+                it.identifier?.text.equals(query)
+            }
+        }
+
+        fun findInnerParameterIdentifiers(
+            containingModule: SvModuleDeclaration,
+            query: String? = null
+        ): List<SvParameterDeclaration>
+        {
+            val result: MutableList<SvParameterDeclaration> = mutableListOf()
+
+            val validDecls: List<SvParameterDeclaration> =
+                containingModule.moduleItemList.filter { it.parameterDeclaration != null }
+                    .map { it.parameterDeclaration!! }
+
+            // Extract NetDecl and Identifier pairs
+            validDecls
+                .filter { it.identifier?.text.equals(query) }
+                .forEach { result += it }
+
+            return result
+        }
     }
 }

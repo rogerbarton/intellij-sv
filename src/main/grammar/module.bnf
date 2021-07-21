@@ -353,16 +353,16 @@ ModuleInstantiation ::= IdentifierRule [ '#' PortValueAssignment ] IdentifierRul
     mixin = "ch.rbarton.intellijsv.core.psi.mixin.SvModuleInstantiationMixin"
 }
 
-PortValueAssignment ::= '(' [ <<CSV Expression>> | <<CSV NamedParameterAssignment>> ] ')' {
+PortValueAssignment ::= '(' [ <<CSV Expression>> | <<CSV NamedPortAssignment>> ] ')' {
     pin = 1
 }
 
-NamedParameterAssignment ::= '.' IDENTIFIER '(' [ Expression ] ')' {
+NamedPortAssignment ::= '.' IDENTIFIER '(' [ Expression ] ')' {
     pin = 1
-    recoverWhile = NamedParameterAssignment_recover
+    recoverWhile = NamedPortAssignment_recover
 }
 
-private NamedParameterAssignment_recover ::= !(',' | ')')
+private NamedPortAssignment_recover ::= !(',' | ')')
 
 GenerateRegion ::= generate GenerateItem endgenerate
 

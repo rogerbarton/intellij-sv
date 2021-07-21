@@ -32,3 +32,12 @@ Naming:
 Formatting:
 
 - Separate large case distinctions over several lines
+
+Different versions:
+
+`Sv.bnf` is the only grammar being used.
+
+Other versions, in descending order of complexity:
+- `SvFull.bnf` contains the whole bnf from the specification
+- `SvCommented.bnf` contains `SvFull.bnf` but with certain parts commented out, nothing has been deleted
+- `SvTiny.bnf` compact version, most non-essential rules removed

@@ -18,7 +18,16 @@ class SvPsiFactory(private val project: Project)
     }
 
     fun createModuleDeclaration(name: String): SvModuleDeclaration =
-        createFromText("module ${name};endmodule") ?: error("Failed to create SvModuleDeclaration")
+        createFromText("module $name;endmodule") ?: error("Failed to create SvModuleDeclaration")
+
+    fun createPortDeclaration(name: String): SvPortDeclaration =
+        createFromText("module a(input logic $name);endmodule") ?: error("Failed to create SvPortDeclaration")
+
+    fun createNetLValue(name: String): SvContinuousAssignItem =
+        createFromText("module a;assign $name = 0;endmodule") ?: error("Failed to create SvContinuousAssignItem")
 
     fun createIdentifier(name: String): PsiElement = createModuleDeclaration(name).identifier
+
+    fun createHierarchicalIdentifier(name: String): PsiElement =
+        createNetLValue(name).netLvalue.hierarchicalIdentifier
 }

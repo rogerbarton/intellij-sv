@@ -29,6 +29,8 @@
         <lang.findUsagesProvider language="System Verilog"
                                  implementationClass="ch.rbarton.intellijsv.ide.search.SvFindUsagesProvider"/>
 
+        <lang.namesValidator implementationClass="ch.rbarton.intellijsv.ide.refactor.SvNamesValidator"/>
+
         <defaultLiveTemplates file="liveTemplates/liveTemplates.xml"/>
         <liveTemplateContext implementation="ch.rbarton.intellijsv.ide.templates.SvContextType$Generic"/>
         <liveTemplateContext implementation="ch.rbarton.intellijsv.ide.templates.SvContextType$Module"/>

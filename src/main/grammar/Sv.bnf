@@ -504,7 +504,7 @@ MultiConcatenationPrimary ::= '{'  '}'
 
 MultiConcatenationPrimaryConst ::= '{' ExpressionConst ConcatenationPrimaryConst '}'
 
-HierarchicalIdentifier ::= [ "$root" '.' ] ( IDENTIFIER BitSelectConst * '.' ) * IDENTIFIER
+HierarchicalIdentifier ::= [ "$root" '.' ] ( IdentifierRule BitSelectConst * '.' ) * IdentifierRule
 
 // Operators
 

@@ -39,7 +39,7 @@ class SvModuleReferenceImpl(element: SvReferenceElement) : SvPolyReference<SvRef
     }
 
     override fun isReferenceTo(element: PsiElement): Boolean =
-        element is SvModuleDeclaration && super.isReferenceTo(element)
+        element is SvModuleDeclaration && super.isReferenceTo(element.identifier)
 
     // TODO: ensure rename also renames references
 }

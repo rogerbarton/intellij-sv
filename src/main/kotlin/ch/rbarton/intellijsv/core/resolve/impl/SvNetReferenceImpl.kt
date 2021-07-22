@@ -1,12 +1,12 @@
 package ch.rbarton.intellijsv.core.resolve.impl
 
-import ch.rbarton.intellijsv.ide.SvIcons
 import ch.rbarton.intellijsv.core.psi.SvModuleDeclaration
 import ch.rbarton.intellijsv.core.psi.SvNetDeclaration
 import ch.rbarton.intellijsv.core.psi.SvPortDeclaration
 import ch.rbarton.intellijsv.core.psi.SvUtil
 import ch.rbarton.intellijsv.core.psi.ext.SvReferenceElement
 import ch.rbarton.intellijsv.core.resolve.SvPolyReference
+import ch.rbarton.intellijsv.ide.SvIcons
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.psi.PsiElement
@@ -52,6 +52,19 @@ class SvNetReferenceImpl(element: SvReferenceElement) : SvPolyReference<SvRefere
         return variants.toTypedArray()
     }
 
-    override fun isReferenceTo(element: PsiElement): Boolean =
-        (element is SvNetDeclaration || element is SvPortDeclaration) && super.isReferenceTo(element)
+    override fun isReferenceTo(element: PsiElement): Boolean
+    {
+        if (element is SvPortDeclaration)
+        {
+            return if (element.identifier == null) false else super.isReferenceTo(element.identifier!!)
+        }
+        else if (element is SvNetDeclaration)
+        {
+            for (id in element.netDeclarationAssignmentList.map { it.identifier })
+                if (super.isReferenceTo(id))
+                    return true
+        }
+
+        return false
+    }
 }

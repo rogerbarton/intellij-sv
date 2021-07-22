@@ -1,9 +1,14 @@
 package ch.rbarton.intellijsv.core.resolve
 
+import ch.rbarton.intellijsv.core.psi.SvHierarchicalIdentifier
+import ch.rbarton.intellijsv.core.psi.SvIdentifierRule
+import ch.rbarton.intellijsv.core.psi.SvPsiFactory
+import ch.rbarton.intellijsv.core.psi.SvTypes.*
 import ch.rbarton.intellijsv.core.psi.ext.SvReferenceElement
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
+import com.intellij.psi.util.elementType
 
 /**
  * Abstract class for reference resolution.
@@ -18,7 +23,7 @@ abstract class SvPolyReference<T : SvReferenceElement>(element: T) :
     final override fun calculateDefaultRangeInElement(): TextRange
     {
         val anchor = element.referenceElement ?: return TextRange.EMPTY_RANGE
-        if(anchor.parent === element)
+        if (anchor.parent === element)
             return TextRange.from(anchor.startOffsetInParent, anchor.textLength)
         check(anchor.parent.parent === element)
         return TextRange.from(anchor.startOffsetInParent + anchor.parent.startOffsetInParent, anchor.textLength)
@@ -29,6 +34,31 @@ abstract class SvPolyReference<T : SvReferenceElement>(element: T) :
     override fun equals(other: Any?): Boolean = other is SvPolyReference<*> && element === other.element
 
     override fun hashCode(): Int = element.hashCode()
+
+    override fun handleElementRename(newName: String): PsiElement
+    {
+        if (element.referenceElement != null)
+            doRename(element.referenceElement!!, newName)
+        return element
+    }
+
+    companion object
+    {
+        @JvmStatic
+        protected fun doRename(identifier: PsiElement, newName: String)
+        {
+            if (identifier.elementType == IDENTIFIER)
+                identifier.replace(SvPsiFactory(identifier.project).createIdentifier(newName))
+            else when (identifier)
+            {
+                is SvIdentifierRule -> identifier.replace(SvPsiFactory(identifier.project).createIdentifier(newName))
+                is SvHierarchicalIdentifier -> identifier.identifierRuleList.last().replace(
+                    SvPsiFactory(identifier.project).createHierarchicalIdentifier(newName)
+                )
+                else -> error("Unsupported identifier type for `$newName` (${identifier.elementType})")
+            }
+        }
+    }
 }
 
 /**
@@ -45,7 +75,7 @@ abstract class SvMonoReference<T : SvReferenceElement> :
     final override fun calculateDefaultRangeInElement(): TextRange
     {
         val anchor = element.referenceElement ?: return TextRange.EMPTY_RANGE
-        if(anchor.parent === element)
+        if (anchor.parent === element)
             return TextRange.from(anchor.startOffsetInParent, anchor.textLength)
         check(anchor.parent.parent === element)
         return TextRange.from(anchor.startOffsetInParent + anchor.parent.startOffsetInParent, anchor.textLength)

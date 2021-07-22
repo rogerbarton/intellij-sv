@@ -1,4 +1,4 @@
-package ch.rbarton.intellijsv.core.parser;
+package ch.rbarton.intellijsv.core.lexer;
 
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
@@ -15,12 +15,29 @@ import static ch.rbarton.intellijsv.core.psi.SvTypes.*;
   }
 %}
 
+%{
+    // Finishes a block comment and leavevs the IN_BLOCK_COMMENT state to YYINITIAL
+    IElementType endBlockComment() {
+        yybegin(YYINITIAL);
+
+        if (yylength() >= 3) {
+            if (yycharat(2) == '*' && (yylength() == 3 || yycharat(3) != '*' && yycharat(3) != '/')) {
+                return DOC_COMMENT;
+            }
+        }
+        return BLOCK_COMMENT;
+    }
+%}
+
 %public
 %class _SvLexer
 %implements FlexLexer
 %function advance
 %type IElementType
 %unicode
+
+// Additional states, default: YYINITIAL
+%s IN_BLOCK_COMMENT
 
 EOL=\R
 WHITE_SPACE=\s+
@@ -34,11 +51,14 @@ SPECIAL_NUMBER='0|'1|'|x|X|z|Z
 WHITE_SPACE=[\s\r\n]+
 IDENTIFIER=[a-zA-Z_][a-zA-Z0-9_$]*
 LINE_COMMENT="//".*
-DOC_COMMENT="/"\*\*(.|\n)*?\*"/"
-BLOCK_COMMENT="/"\*(.|\n)*?\*"/"
 STRING_LITERAL=\"[^\"]*?\"
 
+// Avoid greedy block comments by using the IN_BLOCK_COMMENT state
+// DOC_COMMENT="/"\*\*(.|\n)*?\*"/"
+// BLOCK_COMMENT="/"\*(.|\n)*?\*"/"
+
 %%
+// Default state
 <YYINITIAL> {
   {WHITE_SPACE}          { return WHITE_SPACE; }
 
@@ -171,11 +191,20 @@ STRING_LITERAL=\"[^\"]*?\"
   {SPECIAL_NUMBER}       { return SPECIAL_NUMBER; }
   {WHITE_SPACE}          { return WHITE_SPACE; }
   {IDENTIFIER}           { return IDENTIFIER; }
-  {LINE_COMMENT}         { return LINE_COMMENT; }
-  {DOC_COMMENT}          { return DOC_COMMENT; }
-  {BLOCK_COMMENT}        { return BLOCK_COMMENT; }
   {STRING_LITERAL}       { return STRING_LITERAL; }
 
+  "/*"                   { yybegin(IN_BLOCK_COMMENT); yypushback(2);}
+  {LINE_COMMENT}         { return LINE_COMMENT; }
+
+//  {DOC_COMMENT}          { return DOC_COMMENT; }
+//  {BLOCK_COMMENT}        { return BLOCK_COMMENT; }
+}
+
+
+<IN_BLOCK_COMMENT> {
+  "*/"      { return endBlockComment(); }
+  <<EOF>>   { return endBlockComment(); }
+  [^]       { }
 }
 
 [^] { return BAD_CHARACTER; }

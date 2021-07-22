@@ -14,18 +14,10 @@ import javax.swing.Icon
 abstract class SvModuleDeclarationMixin(node: ASTNode) : SvModuleDeclaration, SvNamedIdentifierOwnerImpl(node),
     SvReferenceElement
 {
+    override fun getBaseIcon(): Icon? = SvIcons.SV_MODULE
+
     // -- SvNameIdentifierOwner
     override fun getNameIdentifier(): PsiElement = identifier
-
-    override fun getPresentation(): ItemPresentation
-    {
-        return object : ItemPresentation  // TODO: Use more advanced PresentationData, see ItemPresentation doc
-        {
-            override fun getPresentableText(): String? = identifier.text
-            override fun getLocationString(): String = containingFile.name
-            override fun getIcon(unused: Boolean): Icon = SvIcons.SV_FILE
-        }
-    }
 
     // -- SvReferenceElement
     override val referenceElement: PsiElement? get() = endmoduleLabel

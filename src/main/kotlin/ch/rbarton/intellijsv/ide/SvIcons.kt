@@ -11,6 +11,9 @@ object SvIcons
     val SV_MODULE = IconLoader.getIcon("/icons/sv-file.png", SvIcons.javaClass)
 
     @JvmField
+    val SV_MODULE_INSTANCE = IconLoader.getIcon("/icons/sv-file.png", SvIcons.javaClass)
+
+    @JvmField
     val SV_NET = IconLoader.getIcon("/icons/sv-file.png", SvIcons.javaClass)
 
     @JvmField

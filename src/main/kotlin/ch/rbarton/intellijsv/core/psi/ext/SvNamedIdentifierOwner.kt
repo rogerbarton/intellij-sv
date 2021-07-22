@@ -28,9 +28,7 @@ abstract class SvNamedIdentifierOwnerImpl(node: ASTNode) : SvNamedIdentifierOwne
 
     override fun getTextOffset(): Int = nameIdentifier?.textOffset ?: super.getTextOffset()
 
-    override fun getPresentation(): ItemPresentation
-    {
-        // Use more advanced PresentationData
-        return PresentationData(name, containingFile.name, SvIcons.SV_FILE, null)
-    }
+    // Use more advanced PresentationData
+    override fun getPresentation(): ItemPresentation =
+        PresentationData(name, containingFile.name, getIcon(0), null)
 }

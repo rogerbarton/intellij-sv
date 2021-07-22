@@ -353,7 +353,8 @@ ModuleInstantiation ::= IdentifierRule [ '#' PortValueAssignment ] IdentifierRul
         moduleIdentifier = '/IdentifierRule[0]'
         instanceIdentifier = '/IdentifierRule[1]'
     ]
-    implements = [ "ch.rbarton.intellijsv.core.psi.ext.SvReferenceElement" ]
+    implements = [ "ch.rbarton.intellijsv.core.psi.ext.SvNamedIdentifierOwner"
+                   "ch.rbarton.intellijsv.core.psi.ext.SvReferenceElement" ]
     mixin = "ch.rbarton.intellijsv.core.psi.mixin.SvModuleInstantiationMixin"
 }
 
@@ -527,6 +528,7 @@ IncDecOperator ::= '++' | '--'
 
 AssignOperator ::= '=' | '<='
 
+//noinspection BnfUnusedRule
 AssignmentOperator ::=
 
     "=" | "+=" | "-=" | "*=" | "/=" | "%=" | "&=" |
@@ -545,4 +547,5 @@ AttributeInstance ::= '(*' <<CSV IdentifierWithDefault>> '*)' {
 //    recoverWhile = AttributeInstance_recover
 }
 
+//noinspection BnfUnusedRule
 private AttributeInstance_recover ::= !'*)'

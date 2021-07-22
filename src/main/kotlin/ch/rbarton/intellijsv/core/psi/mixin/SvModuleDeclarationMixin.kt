@@ -2,7 +2,7 @@ package ch.rbarton.intellijsv.core.psi.mixin
 
 import ch.rbarton.intellijsv.ide.SvIcons
 import ch.rbarton.intellijsv.core.psi.SvModuleDeclaration
-import ch.rbarton.intellijsv.core.psi.ext.SvNameIdentifierOwnerImpl
+import ch.rbarton.intellijsv.core.psi.ext.SvNamedIdentifierOwnerImpl
 import ch.rbarton.intellijsv.core.psi.ext.SvReferenceElement
 import ch.rbarton.intellijsv.core.resolve.SvMonoReference
 import com.intellij.lang.ASTNode
@@ -11,7 +11,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import javax.swing.Icon
 
-abstract class SvModuleDeclarationMixin(node: ASTNode) : SvModuleDeclaration, SvNameIdentifierOwnerImpl(node),
+abstract class SvModuleDeclarationMixin(node: ASTNode) : SvModuleDeclaration, SvNamedIdentifierOwnerImpl(node),
     SvReferenceElement
 {
     // -- SvNameIdentifierOwner

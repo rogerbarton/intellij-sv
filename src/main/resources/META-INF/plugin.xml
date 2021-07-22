@@ -26,6 +26,8 @@
                                 implementationClass="ch.rbarton.intellijsv.ide.SvCompletionContributor"/>
 
         <gotoSymbolContributor implementation="ch.rbarton.intellijsv.ide.SvChooseByNameContributor"/>
+        <lang.findUsagesProvider language="System Verilog"
+                                 implementationClass="ch.rbarton.intellijsv.ide.search.SvFindUsagesProvider"/>
 
         <defaultLiveTemplates file="liveTemplates/liveTemplates.xml"/>
         <liveTemplateContext implementation="ch.rbarton.intellijsv.ide.templates.SvContextType$Generic"/>

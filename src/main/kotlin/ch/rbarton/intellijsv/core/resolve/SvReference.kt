@@ -12,6 +12,24 @@ import com.intellij.psi.*
  */
 abstract class SvPolyReference<T : SvReferenceElement>(element: T) :
     PsiPolyVariantReferenceBase<T>(element, element.referenceElement?.textRangeInParent), PsiPolyVariantReference
+{
+    final override fun getRangeInElement(): TextRange = super.getRangeInElement()
+
+    final override fun calculateDefaultRangeInElement(): TextRange
+    {
+        val anchor = element.referenceElement ?: return TextRange.EMPTY_RANGE
+        if(anchor.parent === element)
+            return TextRange.from(anchor.startOffsetInParent, anchor.textLength)
+        check(anchor.parent.parent === element)
+        return TextRange.from(anchor.startOffsetInParent + anchor.parent.startOffsetInParent, anchor.textLength)
+    }
+
+    override fun getVariants(): Array<out LookupElement> = LookupElement.EMPTY_ARRAY
+
+    override fun equals(other: Any?): Boolean = other is SvPolyReference<*> && element === other.element
+
+    override fun hashCode(): Int = element.hashCode()
+}
 
 /**
  * References at most one identifier
@@ -21,4 +39,15 @@ abstract class SvMonoReference<T : SvReferenceElement> :
 {
     constructor(element: T) : super(element, element.referenceElement?.textRangeInParent)
     constructor(element: T, textRangeInElement: TextRange) : super(element, textRangeInElement)
+
+    final override fun getRangeInElement(): TextRange = super.getRangeInElement()
+
+    final override fun calculateDefaultRangeInElement(): TextRange
+    {
+        val anchor = element.referenceElement ?: return TextRange.EMPTY_RANGE
+        if(anchor.parent === element)
+            return TextRange.from(anchor.startOffsetInParent, anchor.textLength)
+        check(anchor.parent.parent === element)
+        return TextRange.from(anchor.startOffsetInParent + anchor.parent.startOffsetInParent, anchor.textLength)
+    }
 }

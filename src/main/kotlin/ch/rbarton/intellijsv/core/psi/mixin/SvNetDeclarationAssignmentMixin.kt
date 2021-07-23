@@ -9,7 +9,7 @@ import javax.swing.Icon
 
 abstract class SvNetDeclarationAssignmentMixin(node: ASTNode) : SvNetDeclarationAssignment, SvNamedIdentifierOwnerImpl(node)
 {
-    override fun getBaseIcon(): Icon = SvIcons.SV_NET
+    override fun getIcon(flags: Int): Icon = SvIcons.SV_NET
 
     // -- SvNameIdentifierOwner
     override fun getNameIdentifier(): PsiElement? = identifier

@@ -9,7 +9,7 @@ import javax.swing.Icon
 
 abstract class SvPortDeclarationMixin(node: ASTNode) : SvPortDeclaration, SvNamedIdentifierOwnerImpl(node)
 {
-    override fun getBaseIcon(): Icon = when
+    override fun getIcon(flags: Int): Icon = when
     {
         portDirection.input != null -> SvIcons.SV_PORT_INPUT
         portDirection.output != null -> SvIcons.SV_PORT_OUTPUT

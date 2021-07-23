@@ -9,7 +9,7 @@ import javax.swing.Icon
 
 abstract class SvParameterDeclarationMixin(node: ASTNode) : SvParameterDeclaration, SvNamedIdentifierOwnerImpl(node)
 {
-    override fun getBaseIcon(): Icon = when {
+    override fun getIcon(flags: Int): Icon = when {
         parameterType.localparam != null -> SvIcons.SV_LOCALPARAM
         parameterType.parameter != null -> SvIcons.SV_PARAM
         else -> SvIcons.SV_PARAM

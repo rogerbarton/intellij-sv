@@ -14,7 +14,7 @@ import javax.swing.Icon
  */
 abstract class SvModuleInstantiationMixin(node: ASTNode) : SvModuleInstantiation, SvNamedIdentifierOwnerImpl(node)
 {
-    override fun getBaseIcon(): Icon? = SvIcons.SV_MODULE_INSTANCE
+    override fun getIcon(flags: Int): Icon? = SvIcons.SV_MODULE_INSTANCE
 
     // -- SvNameIdentifierOwner
     override fun getNameIdentifier(): PsiElement? = instanceIdentifier

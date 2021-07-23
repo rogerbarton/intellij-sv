@@ -1,7 +1,7 @@
 package ch.rbarton.intellijsv.core.resolve.impl
 
 import ch.rbarton.intellijsv.core.psi.SvModuleDeclaration
-import ch.rbarton.intellijsv.core.psi.SvNetDeclaration
+import ch.rbarton.intellijsv.core.psi.SvNetDeclarationAssignment
 import ch.rbarton.intellijsv.core.psi.SvPortDeclaration
 import ch.rbarton.intellijsv.core.psi.SvUtil
 import ch.rbarton.intellijsv.core.psi.ext.SvReferenceElement
@@ -55,15 +55,9 @@ class SvNetReferenceImpl(element: SvReferenceElement) : SvPolyReference<SvRefere
     override fun isReferenceTo(element: PsiElement): Boolean
     {
         if (element is SvPortDeclaration)
-        {
             return if (element.identifier == null) false else super.isReferenceTo(element.identifier!!)
-        }
-        else if (element is SvNetDeclaration)
-        {
-            for (id in element.netDeclarationAssignmentList.map { it.identifier })
-                if (super.isReferenceTo(id))
-                    return true
-        }
+        else if (element is SvNetDeclarationAssignment)
+            return super.isReferenceTo(element.identifier)
 
         return false
     }

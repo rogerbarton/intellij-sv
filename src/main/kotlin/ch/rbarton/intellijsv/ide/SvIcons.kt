@@ -1,21 +1,37 @@
 package ch.rbarton.intellijsv.ide
 
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.util.IconLoader
 
 object SvIcons
 {
     @JvmField
-    val SV_FILE = IconLoader.getIcon("/icons/sv-file.png", SvIcons.javaClass)
+    val SV_FILE = IconLoader.getIcon("/icons/svFile.svg", SvIcons.javaClass)
 
     @JvmField
-    val SV_MODULE = IconLoader.getIcon("/icons/sv-file.png", SvIcons.javaClass)
+    val SV_MODULE = AllIcons.General.Layout
 
     @JvmField
-    val SV_MODULE_INSTANCE = IconLoader.getIcon("/icons/sv-file.png", SvIcons.javaClass)
+    val SV_MODULE_INSTANCE = AllIcons.Nodes.Interface
 
     @JvmField
-    val SV_NET = IconLoader.getIcon("/icons/sv-file.png", SvIcons.javaClass)
+    val SV_NET = IconLoader.getIcon("/icons/svNet.svg", SvIcons.javaClass)
 
     @JvmField
-    val SV_PARAM = IconLoader.getIcon("/icons/sv-file.png", SvIcons.javaClass)
+    val SV_PORT_INPUT = IconLoader.getIcon("/icons/portInput.svg", SvIcons.javaClass)
+
+    @JvmField
+    val SV_PORT_OUTPUT = IconLoader.getIcon("/icons/portOutput.svg", SvIcons.javaClass)
+
+    @JvmField
+    val SV_PORT_INOUT = IconLoader.getIcon("/icons/portInout.svg", SvIcons.javaClass)
+
+    @JvmField
+    val SV_PORT_REF = IconLoader.getIcon("/icons/portRef.svg", SvIcons.javaClass)
+
+    @JvmField
+    val SV_PARAM = AllIcons.Nodes.Parameter
+
+    @JvmField
+    val SV_LOCALPARAM = AllIcons.Nodes.Property
 }

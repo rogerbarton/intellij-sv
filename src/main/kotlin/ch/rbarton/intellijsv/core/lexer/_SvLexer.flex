@@ -75,6 +75,7 @@ STRING_LITERAL=\"[^\"]*?\"
   ";"                    { return SEMICOLON; }
   ","                    { return COMMA; }
   "#"                    { return SHA; }
+  "@"                    { return AT; }
   "##"                   { return SHASHA; }
   "."                    { return DOT; }
   "_"                    { return UNDERSCORE; }
@@ -86,6 +87,7 @@ STRING_LITERAL=\"[^\"]*?\"
   "!=="                  { return EXCLEQEQ; }
   "!="                   { return EXCLEQ; }
   "!"                    { return EXCL; }
+  "?"                    { return QUEST; }
   "+="                   { return PLUSEQ; }
   "++"                   { return PLUSPLUS; }
   "+"                    { return PLUS; }

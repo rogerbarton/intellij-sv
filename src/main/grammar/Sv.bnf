@@ -30,6 +30,7 @@
         SEMICOLON   = ';'
         COMMA       = ','
 
+        AT          = '@'
         SHA         = '#'
         SHASHA      = '##'
         DOT         = '.'
@@ -44,6 +45,7 @@
         EXCLEQEQ    = '!=='
         EXCLEQ      = '!='
         EXCL        = '!'
+        QUEST       = '?'
 
         PLUSEQ      = '+='
         PLUSPLUS    = '++'
@@ -65,7 +67,7 @@
         TILDHAT     = '~^'
         TILD        = '~'
         HATTILD     = '^~'
-        HATEQ         = '^='
+        HATEQ       = '^='
         HAT         = '^'
 
         GTEQ        = '>='
@@ -485,9 +487,9 @@ BinaryExpr ::= Expression BinaryOperator AttributeInstance * Expression
 
 BinaryExprConst ::= ExpressionConst BinaryOperator AttributeInstance * ExpressionConst
 
-TernaryExpr ::= Expression '?' AttributeInstance * Expression ':' Expression
+TernaryExpr ::= Expression '?' AttributeInstance * Expression ':' Expression { rightAssociative = true }
 
-TernaryExprConst ::= ExpressionConst '?' AttributeInstance * ExpressionConst ':' ExpressionConst
+TernaryExprConst ::= ExpressionConst '?' AttributeInstance * ExpressionConst ':' ExpressionConst { rightAssociative = true }
 
 IncDecExpr ::=
       IncDecOperator AttributeInstance * NetLvalue

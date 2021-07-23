@@ -92,6 +92,8 @@
         ANDAND      = '&&'
         AND_        = '&'
 
+        QUOT        = "'"
+
         // Literals
         TIME_LITERAL    = "regexp:\d[_\d]*(s|ms|us|ns|ps|fs)"
         BINARY_NUMBER   = "regexp:\d[_\d]*'[sS]?[bB][01XxZz?][_01XxZz?]*"
@@ -113,11 +115,13 @@
 
     // Reduce size of PSI tree for recursive parts
     extends(".*Stmt|SeqBlock") = Statement
-    extends(".*Expr") = Expression
-    extends(".*ExprConst") = ExpressionConst
+    extends(".*Expr") = Expr
+
+    elementType(".+BinExpr") = BinaryExpr
+    elementType(".+BinOp") = BinaryOperator
 
     // Performance for expressions, simplier error messages
-    consumeTokenMethod("((?!.*_with_recover).*_recover|Primary)") = "consumeTokenFast"
+    consumeTokenMethod("((?!.*_with_recover).*_recover)|(.*_first)|(.*Expr)") = "consumeTokenFast"
 }
 
 SvFile ::= [ (TimeunitsDeclaration ';' )* ] ModuleDeclaration *
@@ -177,10 +181,10 @@ ModuleHeader ::=
 
 // Parameter Declarations
 
-ParameterDeclaration ::= ParameterType Type IDENTIFIER UnpackedDimension * [ '=' Expression ] {
+ParameterDeclaration ::= ParameterType Type IDENTIFIER UnpackedDimension * [ '=' Expr ] {
     pin = 1
     recoverWhile = CSV_recover
-    methods = [ defaultValue = "Expression" ]
+    methods = [ defaultValue = "Expr" ]
     implements = [ "ch.rbarton.intellijsv.core.psi.ext.SvNamedIdentifierOwner" ]
     extends = "ch.rbarton.intellijsv.core.psi.mixin.SvParameterDeclarationMixin"
 }
@@ -191,10 +195,10 @@ ParameterType ::= parameter | localparam
 
 PortDeclaration ::=
 
-    AttributeInstance * PortDirection Type IDENTIFIER [ '=' ExpressionConst ] {
+    AttributeInstance * PortDirection Type IDENTIFIER [ '=' ConstExpr ] {
     pin = 2
     recoverWhile = CSV_recover
-    methods = [ defaultValue = "ExpressionConst" ]
+    methods = [ defaultValue = "ConstExpr" ]
     implements = [ "ch.rbarton.intellijsv.core.psi.ext.SvNamedIdentifierOwner" ]
     extends = "ch.rbarton.intellijsv.core.psi.mixin.SvPortDeclarationMixin"
     }
@@ -222,19 +226,19 @@ NetDeclaration ::= Type <<CSV NetDeclarationAssignment>> !'('{
     recoverWhile = Semicolon_recover
 }
 
-NetDeclarationAssignment ::= IDENTIFIER UnpackedDimension * [ '=' Expression ] {
+NetDeclarationAssignment ::= IDENTIFIER UnpackedDimension * [ '=' Expr ] {
     implements = [ "ch.rbarton.intellijsv.core.psi.ext.SvNamedIdentifierOwner" ]
     extends = "ch.rbarton.intellijsv.core.psi.mixin.SvNetDeclarationAssignmentMixin"
 }
 
-IdentifierWithDefault ::= IDENTIFIER [ '=' Expression ]
+IdentifierWithDefault ::= IDENTIFIER [ '=' Expr ]
 
 ContinuousAssign ::= assign <<CSV ContinuousAssignItem>> {
     pin = 1
     recoverWhile = Semicolon_recover
 }
 
-ContinuousAssignItem ::= NetLvalue AssignOperator Expression {
+ContinuousAssignItem ::= NetLvalue AssignOperator Expr {
     pin = 2
     recoverWhile = CSV_recover
     implements = [ "ch.rbarton.intellijsv.core.psi.ext.SvReferenceElement" ]
@@ -286,7 +290,7 @@ BlockItem ::=
     | ParameterDeclaration
     ) ';'
 
-AssignmentStmt ::= NetLvalue AssignOperator Expression {
+AssignmentStmt ::= NetLvalue AssignOperator Expr {
     pin = 2
     recoverWhile = Semicolon_recover
 }
@@ -294,9 +298,9 @@ AssignmentStmt ::= NetLvalue AssignOperator Expression {
 ConditionalStmt ::=
 
     [ UniquePriority ]
-    if '(' Expression ')'
+    if '(' Expr ')'
         Statement
-    ( else if '(' Expression ')'
+    ( else if '(' Expr ')'
         Statement ) *
     [ else
         Statement ] {
@@ -317,13 +321,13 @@ EventControl ::=
     pin = 1
 }
 
-DelayControl ::= '#' ( DelayLiteral | '(' Expression ')' ) {
+DelayControl ::= '#' ( DelayLiteral | '(' Expr ')' ) {
     pin = 1
 }
 
 DelayLiteral ::= UNSIGNED_NUMBER | TIME_LITERAL | IDENTIFIER | "1step"
 
-DelayCycle ::= '##' ( UNSIGNED_NUMBER | IDENTIFIER | '(' Expression ')' ) {
+DelayCycle ::= '##' ( UNSIGNED_NUMBER | IDENTIFIER | '(' Expr ')' ) {
     pin = 1
 }
 
@@ -333,7 +337,7 @@ EventExpression ::=
     | BinaryEventExpression
     | AtomicEventExpression
 
-AtomicEventExpression ::= [ EdgeIdentifier ] Expression [ iff Expression ] {
+AtomicEventExpression ::= [ EdgeIdentifier ] Expr [ iff Expr ] {
     extends = EventExpression
 }
 
@@ -360,11 +364,11 @@ ModuleInstantiation ::= IdentifierRule [ '#' PortValueAssignment ] IdentifierRul
     mixin = "ch.rbarton.intellijsv.core.psi.mixin.SvModuleInstantiationMixin"
 }
 
-PortValueAssignment ::= '(' [ <<CSV Expression>> | <<CSV NamedPortAssignment>> ] ')' {
+PortValueAssignment ::= '(' [ <<CSV Expr>> | <<CSV NamedPortAssignment>> ] ')' {
     pin = 1
 }
 
-NamedPortAssignment ::= '.' IDENTIFIER '(' [ Expression ] ')' {
+NamedPortAssignment ::= '.' IDENTIFIER '(' [ Expr ] ')' {
     pin = 1
     recoverWhile = NamedPortAssignment_recover
 }
@@ -402,7 +406,7 @@ EnumBaseType ::=
     | IntegerVectorType [ Signing ] [ PackedDimension ]
     | IDENTIFIER [ PackedDimension ]
 
-EnumMember ::= IDENTIFIER [ '[' UnsignedNumberRule [ ':' UnsignedNumberRule ] ] [ '=' ExpressionConst ]
+EnumMember ::= IDENTIFIER [ '[' UnsignedNumberRule [ ':' UnsignedNumberRule ] ] [ '=' ConstExpr ]
 
 StructUnionDeclaration ::= ( struct | union ) [ packed [ Signing ] ] '{' StructUnionMember + '}' PackedDimension *
 
@@ -410,8 +414,8 @@ StructUnionMember ::= AttributeInstance * Type <<CSV IdentifierWithDefault>> ';'
 
 // Dimensions
 
-UnpackedDimension ::= '[' Expression ':' Expression ']' {
-//    pin = 1
+UnpackedDimension ::= '[' Expr ':' Expr ']' {
+    pin = 3
 }
 
 private PackedDimension ::= UnpackedDimension
@@ -423,7 +427,7 @@ VariableDimension ::=
       UnsizedDimension
     | UnpackedDimension
 
-BitSelectConst ::= '[' ExpressionConst ']'
+BitSelect ::= '[' Expr ']'
 
 // Built-in Types and Related Keywords
 
@@ -443,79 +447,99 @@ SimpleType ::= IntegerType | NonIntegerType | IDENTIFIER
 
 // Expressions
 
-Expression ::=
+/*
+See IEEE 1800-2017 Table 11-2 Operator precedence and associativity
+Grouped by equivalent precedence.
+Note: order may appear reversed to the table. Low precedence groups are first.
+Fake rules are used to structure the PSI tree.
+Const expressions are enforced with extra rules provided by the [SvParserUtil].
+ */
+ConstExpr ::= <<exprMode 'true' Expr>> {
+  elementType = Expr
+  name = "Expr"
+}
 
-      ParenExpr
+Expr ::=
+
+      PredicateAndExpr
+    | ConcatExpr
+    | AssignBinExpr
+    | ArrowBinExpr
+    | TernaryExpr  // TODO: broken, second expression is not recognized
+    | LogicOrBinExpr
+    | LogicAndBinExpr
+    | BitOrBinExpr
+    | BitXorBinExpr
+    | BitAndBinExpr
+    | EqCompBinExpr
+    | RelCompBinExpr
+    | ShiftBinExpr
+    | AddBinExpr
+    | MulBinExpr
+    | PowBinExpr
+    | IncUnaryExpr
     | UnaryExpr
-    | BinaryExpr
-    | IncDecExpr
-    | TernaryExpr
-    | Primary
+    | DotBinExpr
+    | CastExpr
+    | AtomicExpr
 
-ExpressionConst ::=
+// TODO: compare with SvFull.bnf for consistency
+AtomicExpr ::=
 
-      UnaryExprConst
-    | BinaryExprConst
-    | TernaryExprConst
-    | PrimaryConst
+      ConcatExpr
+    | ParenExpr
+    | BraceExpr
+    | Literal
+    | <<isNonConstExpr>> HierarchicalIdentifier
 
-Primary ::=
+PredicateAndExpr ::= Expr '&&&' Expr
+ConcatExpr       ::= '{' <<CSV Expr>> '}'
+AssignBinExpr    ::= Expr AssignBinOp Expr
+ArrowBinExpr     ::= Expr ArrowBinOp Expr { rightAssociative = true }
+TernaryExpr      ::= Expr '?' Expr ':' Expr { rightAssociative = true }
+LogicOrBinExpr   ::= Expr '||' Expr
+LogicAndBinExpr  ::= Expr '&&' Expr
+BitOrBinExpr     ::= Expr '|' Expr
+BitXorBinExpr    ::= Expr BitXorBinOp Expr
+BitAndBinExpr    ::= Expr '&' Expr
+EqCompBinExpr    ::= Expr EqCompBinOp Expr
+RelCompBinExpr   ::= Expr RelCompBinOp Expr
+ShiftBinExpr     ::= Expr ShiftBinOp Expr
+AddBinExpr       ::= Expr AddBinOp Expr
+MulBinExpr       ::= Expr MulBinOp Expr
+PowBinExpr       ::= Expr '**' Expr
+IncUnaryExpr     ::= IncDecOp NetLvalue | NetLvalue IncDecOp
+UnaryExpr        ::= UnaryOp AtomicExpr
 
-      Literal
-    | HierarchicalIdentifier
-    | ConcatenationPrimary
-    | MultiConcatenationPrimary
-    | Cast {
-        extends = Expression
-    }
+ParenExpr        ::= '(' Expr ')'
+BraceExpr        ::= '[' Expr ']' // TODO: should have Expr before as well, use fake rule, works with BinExpr
+DotBinExpr       ::= Expr '.' Expr
+CastExpr         ::= CastingType "'" '(' Expr ')'
 
-PrimaryConst ::=
-
-      Literal
-    | ConcatenationPrimaryConst
-    | MultiConcatenationPrimaryConst {
-        extends = ExpressionConst
-    }
-
-ParenExpr ::= '(' Expression ')'
-
-UnaryExpr ::= UnaryOperator AttributeInstance* Primary
-
-UnaryExprConst ::= UnaryOperator AttributeInstance* PrimaryConst
-
-BinaryExpr ::= Expression BinaryOperator AttributeInstance * Expression
-
-BinaryExprConst ::= ExpressionConst BinaryOperator AttributeInstance * ExpressionConst
-
-TernaryExpr ::= Expression '?' AttributeInstance * Expression ':' Expression { rightAssociative = true }
-
-TernaryExprConst ::= ExpressionConst '?' AttributeInstance * ExpressionConst ':' ExpressionConst { rightAssociative = true }
-
-IncDecExpr ::=
-      IncDecOperator AttributeInstance * NetLvalue
-    | NetLvalue AttributeInstance * IncDecOperator
-
-Cast ::= CastingType "'" '(' Expression ')'
-
-CastingType ::= Signing | string | const | PrimaryConst | SimpleType
-
-ConcatenationPrimary ::= '{' <<CSV Expression>> '}'
-
-ConcatenationPrimaryConst ::= '{' <<CSV ExpressionConst>> '}'
-
-MultiConcatenationPrimary ::= '{'  '}'
-
-MultiConcatenationPrimaryConst ::= '{' ExpressionConst ConcatenationPrimaryConst '}'
-
-HierarchicalIdentifier ::= [ "$root" '.' ] ( IdentifierRule BitSelectConst * '.' ) * IdentifierRule
+CastingType ::= Signing | string | const | AtomicExpr | SimpleType
 
 // Operators
+UnaryOp      ::= '+' | '-' | '!' | '~' | '&' | '~&' | '|' | '~|' | '^' | '~^' | '^~' { name = "operator" }
+IncDecOp     ::= '++' | '--' { name = "operator" }
+MulBinOp     ::= '*' | '/' | '%' { name = "operator"}
+AddBinOp     ::= '+' | '-' { name = "operator" }
+ShiftBinOp   ::= '>>' | '<<' | '>>>' | '<<<' { name = "operator" }
+RelCompBinOp ::= '<'  | '<=' | '>' | '>=' { name = "operator" }
+EqCompBinOp  ::= '==' | '!=' | '===' | '!==' | '==?' | '!=?' { name = "operator" }
+BitXorBinOp  ::= '^' | '^~' | '~^' { name = "operator" }
+ArrowBinOp   ::= '->' | '<->' { name = "operator" }
+AssignBinOp  ::= '=' | '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^='
+                 | '<<=' | '>>=' | '<<<=' | '>>>=' { name = "operator" }
 
-UnaryOperator ::=
 
-    '+' | '-' | '!' | '~' | '&' | '~&' | '|' | '~|' | '^' | '~^' | '^~'
+fake BinaryExpr ::= Expr BinaryOperator Expr {
+  methods = [
+    left="Expr[0]"
+    right="Expr[1]"
+  ]
+}
 
-BinaryOperator ::=
+fake BinaryOperator ::=
 
       '+'  | '-'  | '*'   | '/'   | '%'
     | '==' | '!=' | '===' | '!==' | '==?' | '!=?'
@@ -524,17 +548,17 @@ BinaryOperator ::=
     | '&'  | '|'  | '^'   | '^~'  | '~^'
     | '>>' | '<<' | '>>>' | '<<<'
     | '->' | '<->'
-    | '&&&' // predicate
-
-IncDecOperator ::= '++' | '--'
-
-AssignOperator ::= '=' | '<='
-
-//noinspection BnfUnusedRule
-AssignmentOperator ::=
-
+    | '&&&'
+//AssignmentOperator ::=
+    |
     "=" | "+=" | "-=" | "*=" | "/=" | "%=" | "&=" |
     "|=" | "^=" | "<<=" | ">>=" | "<<<=" | ">>>="
+
+HierarchicalIdentifier ::= [ "$root" '.' ] ( IdentifierRule <<beginConstExpr>> BitSelect * <<endConstExpr>> '.' ) * IdentifierRule
+
+// Operators
+
+AssignOperator ::= '=' | '<='
 
 // Literals
 

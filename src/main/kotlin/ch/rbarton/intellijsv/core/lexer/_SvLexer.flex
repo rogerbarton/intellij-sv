@@ -129,6 +129,7 @@ STRING_LITERAL=\"[^\"]*?\"
   "&&&"                  { return ANDANDAND; }
   "&&"                   { return ANDAND; }
   "&"                    { return AND_; }
+  "'"                    { return QUOT; }
   "timeunit"             { return TIMEUNIT; }
   "timeprecision"        { return TIMEPRECISION; }
   "module"               { return MODULE; }

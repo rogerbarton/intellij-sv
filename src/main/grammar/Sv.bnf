@@ -134,7 +134,7 @@ private CSV_recover ::= !(';' | ',' | ')' | '*)')   // Must include comma
 // Meta Rules
 
 private meta CSV ::= <<XSV <<item>> ','>>
-private meta XSV ::= <<item>> ( <<sep>> <<item>> )* <<sep>>?
+private meta XSV ::= <<item>> ( <<sep>> <<item>> )* { pin(".*") = 1 }
 
 // Trivial Rules
 
@@ -539,6 +539,7 @@ fake BinaryExpr ::= Expr BinaryOperator Expr {
   ]
 }
 
+//noinspection BnfUnusedRule
 fake BinaryOperator ::=
 
       '+'  | '-'  | '*'   | '/'   | '%'

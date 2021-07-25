@@ -31,6 +31,9 @@
 
         <lang.namesValidator implementationClass="ch.rbarton.intellijsv.ide.refactor.SvNamesValidator"/>
 
+        <lang.psiStructureViewFactory language="System Verilog"
+                                      implementationClass="ch.rbarton.intellijsv.ide.stucture.SvPsiStructureViewFactory"/>
+
         <lang.documentationProvider language="System Verilog"
                                     implementationClass="ch.rbarton.intellijsv.ide.doc.SvDocumentationProvider"/>
 

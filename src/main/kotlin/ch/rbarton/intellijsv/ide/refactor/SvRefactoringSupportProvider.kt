@@ -8,5 +8,5 @@ import com.intellij.psi.PsiElement
 class SvRefactoringSupportProvider : RefactoringSupportProvider()
 {
     override fun isMemberInplaceRenameAvailable(element: PsiElement, context: PsiElement?) =
-        element is SvNamedIdentifierOwner || element is SvReferenceElement
+        element is SvNamedIdentifierOwner
 }

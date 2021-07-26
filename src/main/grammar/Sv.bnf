@@ -138,8 +138,11 @@ private meta XSV ::= <<item>> ( <<sep>> <<item>> )* { pin(".*") = 1 }
 
 // Trivial Rules
 
-IdentifierRule ::= IDENTIFIER
-Label ::= IDENTIFIER
+Label ::= ':' IDENTIFIER? {
+    pin = 1
+    implements = "ch.rbarton.intellijsv.core.psi.ext.SvReferenceElement"
+    mixin = "ch.rbarton.intellijsv.core.psi.mixin.SvLabelMixin"
+}
 UnsignedNumberRule ::= UNSIGNED_NUMBER
 TimeLiteralRule ::= TIME_LITERAL
 
@@ -161,10 +164,9 @@ ModuleDeclaration ::=
     AttributeInstance *
     module IDENTIFIER ModuleHeader ';'
     ModuleItem *
-    endmodule [ ':' Label ] {
+    endmodule [ Label ] {
     pin = 3
     implements = [ "ch.rbarton.intellijsv.core.psi.ext.SvNamedIdentifierOwner"
-                   "ch.rbarton.intellijsv.core.psi.ext.SvReferenceElement"
                     ]
     mixin = "ch.rbarton.intellijsv.core.psi.mixin.SvModuleDeclarationMixin"
     methods = [
@@ -281,10 +283,10 @@ Statement ::=
 
 SeqBlock ::=
 
-    begin [ ':' IdentifierRule ]
+    begin [ Label ]
     BlockItem *
     Statement *
-    end [ ':' IdentifierRule ] {
+    end [ Label ] {
     pin = 1
     }
 
@@ -359,14 +361,18 @@ EdgeIdentifier ::= posedge | negedge | edge
 
 // Module Instantiation
 
-ModuleInstantiation ::= IdentifierRule [ '#' PortValueAssignment ] IdentifierRule [ PortValueAssignment ] {
+ModuleInstantiation ::= ModuleIdentifier [ '#' PortValueAssignment ] IDENTIFIER [ PortValueAssignment ] {
     methods = [
-        moduleIdentifier = '/IdentifierRule[0]'
-        instanceIdentifier = '/IdentifierRule[1]'
+        instanceIdentifier = 'IDENTIFIER'
     ]
-    implements = [ "ch.rbarton.intellijsv.core.psi.ext.SvNamedIdentifierOwner"
-                   "ch.rbarton.intellijsv.core.psi.ext.SvReferenceElement" ]
+    implements = [ "ch.rbarton.intellijsv.core.psi.ext.SvNamedIdentifierOwner" ]
     mixin = "ch.rbarton.intellijsv.core.psi.mixin.SvModuleInstantiationMixin"
+}
+
+// Workaround for not having two IDENTIFIER tokens in one rule
+ModuleIdentifier ::= IDENTIFIER {
+    implements = "ch.rbarton.intellijsv.core.psi.ext.SvReferenceElement"
+    mixin = "ch.rbarton.intellijsv.core.psi.mixin.SvModuleIdentifierMixin"
 }
 
 PortValueAssignment ::= '(' [ <<CSV Expr>> | <<CSV NamedPortAssignment>> ] ')' {
@@ -562,7 +568,9 @@ fake BinaryOperator ::=
     "=" | "+=" | "-=" | "*=" | "/=" | "%=" | "&=" |
     "|=" | "^=" | "<<=" | ">>=" | "<<<=" | ">>>="
 
-HierarchicalIdentifier ::= [ "$root" '.' ] ( IdentifierRule <<beginConstExpr>> BitSelect * <<endConstExpr>> '.' ) * IdentifierRule
+HierarchicalIdentifier ::= [ "$root" '.' ] ( IdentifierPlaceholder <<beginConstExpr>> BitSelect * <<endConstExpr>> '.' ) * IDENTIFIER
+
+IdentifierPlaceholder ::= IDENTIFIER
 
 // Operators
 

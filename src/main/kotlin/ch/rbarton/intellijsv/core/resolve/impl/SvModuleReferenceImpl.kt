@@ -1,10 +1,10 @@
 package ch.rbarton.intellijsv.core.resolve.impl
 
-import ch.rbarton.intellijsv.ide.SvIcons
 import ch.rbarton.intellijsv.core.psi.SvModuleDeclaration
 import ch.rbarton.intellijsv.core.psi.SvUtil
 import ch.rbarton.intellijsv.core.psi.ext.SvReferenceElement
 import ch.rbarton.intellijsv.core.resolve.SvPolyReference
+import ch.rbarton.intellijsv.ide.SvIcons
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.psi.PsiElement
@@ -40,6 +40,4 @@ class SvModuleReferenceImpl(element: SvReferenceElement) : SvPolyReference<SvRef
 
     override fun isReferenceTo(element: PsiElement): Boolean =
         element is SvModuleDeclaration && super.isReferenceTo(element.identifier)
-
-    // TODO: ensure rename also renames references
 }

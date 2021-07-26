@@ -3,7 +3,7 @@ package ch.rbarton.intellijsv.core.resolve
 import ch.rbarton.intellijsv.core.psi.SvHierarchicalIdentifier
 import ch.rbarton.intellijsv.core.psi.SvIdentifierRule
 import ch.rbarton.intellijsv.core.psi.SvPsiFactory
-import ch.rbarton.intellijsv.core.psi.SvTypes.*
+import ch.rbarton.intellijsv.core.psi.SvTypes.IDENTIFIER
 import ch.rbarton.intellijsv.core.psi.ext.SvReferenceElement
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.util.TextRange
@@ -52,7 +52,7 @@ abstract class SvPolyReference<T : SvReferenceElement>(element: T) :
             else when (identifier)
             {
                 is SvIdentifierRule -> identifier.replace(SvPsiFactory(identifier.project).createIdentifier(newName))
-                is SvHierarchicalIdentifier -> identifier.identifierRuleList.last().replace(
+                is SvHierarchicalIdentifier -> identifier.identifier.replace(
                     SvPsiFactory(identifier.project).createHierarchicalIdentifier(newName)
                 )
                 else -> error("Unsupported identifier type for `$newName` (${identifier.elementType})")

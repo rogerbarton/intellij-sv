@@ -2,7 +2,8 @@ package ch.rbarton.intellijsv.ide.refactor
 
 import ch.rbarton.intellijsv.core.lexer.SvLexer
 import ch.rbarton.intellijsv.core.psi.SV_KEYWORDS
-import ch.rbarton.intellijsv.core.psi.SvTypes.*
+import ch.rbarton.intellijsv.core.psi.SvTypes.HIERARCHICAL_IDENTIFIER
+import ch.rbarton.intellijsv.core.psi.SvTypes.IDENTIFIER
 import com.intellij.lang.refactoring.NamesValidator
 import com.intellij.openapi.project.Project
 import com.intellij.psi.tree.IElementType
@@ -22,7 +23,7 @@ class SvNamesValidator : NamesValidator
 
         fun isIdentifier(name: String): Boolean = when (getLexerType(name))
         {
-            IDENTIFIER, HIERARCHICAL_IDENTIFIER, IDENTIFIER_RULE -> true
+            IDENTIFIER, HIERARCHICAL_IDENTIFIER -> true
             else -> false
         }
 

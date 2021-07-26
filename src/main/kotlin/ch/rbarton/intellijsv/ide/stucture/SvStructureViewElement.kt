@@ -1,20 +1,22 @@
 package ch.rbarton.intellijsv.ide.stucture
 
-import ch.rbarton.intellijsv.core.psi.SvAlwaysConstruct
 import ch.rbarton.intellijsv.core.psi.SvFile
 import ch.rbarton.intellijsv.core.psi.SvModuleDeclaration
-import ch.rbarton.intellijsv.core.psi.SvSeqBlock
+import ch.rbarton.intellijsv.ide.presentation.getPresentationStructureView
 import com.intellij.ide.projectView.PresentationData
 import com.intellij.ide.structureView.StructureViewTreeElement
 import com.intellij.ide.util.treeView.TreeAnchorizer
 import com.intellij.ide.util.treeView.smartTree.TreeElement
 import com.intellij.navigation.ItemPresentation
-import com.intellij.navigation.NavigationItem
 import com.intellij.pom.Navigatable
 import com.intellij.psi.PsiElement
 
+/**
+ * Defines a node in the Structure view tree and which children are shown.
+ */
 class SvStructureViewElement(psiArg: PsiElement) : StructureViewTreeElement
 {
+    // TreeAnchorizer used for performance
     private val psiAnchor = TreeAnchorizer.getService().createAnchor(psiArg)
     private val psi: PsiElement? get() = TreeAnchorizer.getService().retrieveElement(psiAnchor) as? PsiElement
 
@@ -30,12 +32,9 @@ class SvStructureViewElement(psiArg: PsiElement) : StructureViewTreeElement
     override fun getValue(): PsiElement? = psi
 
     override fun getPresentation(): ItemPresentation =
-        (psi as? NavigationItem)?.presentation ?: PresentationData("yolo", null, null, null)
+        psi?.let(::getPresentationStructureView) ?: PresentationData("", null, null, null)
 
-    override fun getChildren(): Array<TreeElement>
-    {
-        return childElements.map(::SvStructureViewElement).toTypedArray()
-    }
+    override fun getChildren(): Array<TreeElement> = childElements.map(::SvStructureViewElement).toTypedArray()
 
     private val childElements: List<PsiElement>
         get()
@@ -46,12 +45,7 @@ class SvStructureViewElement(psiArg: PsiElement) : StructureViewTreeElement
                 {
                     val result: MutableList<PsiElement> = mutableListOf()
                     for (item in psi.children)
-                    {
-                        when (item)
-                        {
-                            is SvModuleDeclaration -> result += item
-                        }
-                    }
+                        if (item is SvModuleDeclaration) result += item
                     result
                 }
                 is SvModuleDeclaration ->
@@ -59,11 +53,14 @@ class SvStructureViewElement(psiArg: PsiElement) : StructureViewTreeElement
                     val result: MutableList<PsiElement> = mutableListOf()
                     psi.moduleHeader?.parameterDeclarationList?.let { result.addAll(it) }
                     psi.moduleHeader?.portDeclarationList?.let { result.addAll(it) }
-                    result += psi.moduleItemList
+                    result.addAll(psi.moduleItemList.filter {
+                        it.parameterDeclaration != null || it.typeDeclaration != null
+                                || it.netDeclaration != null || it.moduleInstantiation != null || it.alwaysConstruct != null
+                                || it.initialConstruct != null || it.finalConstruct != null || it.generateRegion != null
+                    })
                     result
                 }
-                // TODO: test this, add presentation data
-                is SvAlwaysConstruct -> (psi.statement as? SvSeqBlock)?.statementList ?: emptyList()
+//                is SvAlwaysConstruct -> (psi.statement as? SvSeqBlock)?.statementList ?: emptyList()
                 else -> emptyList()
             }
         }

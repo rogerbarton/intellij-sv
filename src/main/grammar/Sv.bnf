@@ -140,7 +140,7 @@ private meta XSV ::= <<item>> ( <<sep>> <<item>> )* { pin(".*") = 1 }
 
 Label ::= ':' IDENTIFIER? {
     pin = 1
-    implements = "ch.rbarton.intellijsv.core.psi.ext.SvReferenceElement"
+    implements = "ch.rbarton.intellijsv.core.psi.ext.SvReferenceOwner"
     mixin = "ch.rbarton.intellijsv.core.psi.mixin.SvLabelMixin"
 }
 UnsignedNumberRule ::= UNSIGNED_NUMBER
@@ -247,7 +247,7 @@ ContinuousAssign ::= assign <<CSV ContinuousAssignItem>> {
 ContinuousAssignItem ::= NetLvalue AssignOperator Expr {
     pin = 2
     recoverWhile = CSV_recover
-    implements = [ "ch.rbarton.intellijsv.core.psi.ext.SvReferenceElement" ]
+    implements = [ "ch.rbarton.intellijsv.core.psi.ext.SvReferenceOwner" ]
     mixin = "ch.rbarton.intellijsv.core.psi.mixin.SvContinuousAssignItemMixin"
 }
 
@@ -371,7 +371,7 @@ ModuleInstantiation ::= ModuleIdentifier [ '#' PortValueAssignment ] IDENTIFIER 
 
 // Workaround for not having two IDENTIFIER tokens in one rule
 ModuleIdentifier ::= IDENTIFIER {
-    implements = "ch.rbarton.intellijsv.core.psi.ext.SvReferenceElement"
+    implements = "ch.rbarton.intellijsv.core.psi.ext.SvReferenceOwner"
     mixin = "ch.rbarton.intellijsv.core.psi.mixin.SvModuleIdentifierMixin"
 }
 

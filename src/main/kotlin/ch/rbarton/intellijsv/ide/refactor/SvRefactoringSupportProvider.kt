@@ -1,7 +1,6 @@
 package ch.rbarton.intellijsv.ide.refactor
 
 import ch.rbarton.intellijsv.core.psi.ext.SvNamedIdentifierOwner
-import ch.rbarton.intellijsv.core.psi.ext.SvReferenceElement
 import com.intellij.lang.refactoring.RefactoringSupportProvider
 import com.intellij.psi.PsiElement
 

@@ -8,11 +8,11 @@ import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 
-class SvUtil
+class SvPsiUtil
 {
     companion object
     {
-        fun findModuleIdentifiers(project: Project, query: String? = null): List<SvModuleDeclaration>
+        fun findModuleDeclarations(project: Project, query: String? = null): List<SvModuleDeclaration>
         {
             val result: MutableList<SvModuleDeclaration> = mutableListOf()
             val virtualFiles: Collection<VirtualFile> =
@@ -32,21 +32,21 @@ class SvUtil
             return result
         }
 
-        fun findPortNetIdentifiers(
+        fun findPortNets(
             containingModule: SvModuleDeclaration,
             query: String? = null
         ): List<SvPortDeclaration>
         {
             if (containingModule.moduleHeader == null) return emptyList()
 
-            val results = containingModule.moduleHeader!!.portDeclarationList
+            val results = containingModule.moduleHeader!!.portDeclarationList.toMutableList()
             if (query != null)
-                results.filter { it.identifier?.text.equals(query) }
+                results.retainAll { it.identifier?.text.equals(query) }
 
             return results
         }
 
-        fun findInnerNetIdentifiers(
+        fun findInnerNets(
             containingModule: SvModuleDeclaration,
             query: String? = null
         ): List<Pair<SvNetDeclaration, SvNetDeclarationAssignment>>
@@ -56,7 +56,7 @@ class SvUtil
             // Get NetDeclarations with a valid containing identifier, note: it may have multiple
             for (decl in containingModule.moduleItemList)
             {
-                if(decl.netDeclaration == null) continue
+                if (decl.netDeclaration == null) continue
                 for (identifierWithDefault in decl.netDeclaration!!.netDeclarationAssignmentList)
                 {
                     if (query == null || identifierWithDefault.identifier.text.equals(query))
@@ -67,36 +67,35 @@ class SvUtil
             return result
         }
 
-        fun findPortParameterIdentifiers(
+        fun findPortParameters(
             containingModule: SvModuleDeclaration,
             query: String? = null
         ): List<SvParameterDeclaration>
         {
             if (containingModule.moduleHeader == null) return emptyList()
 
-            val results = containingModule.moduleHeader!!.parameterDeclarationList
+            val results = containingModule.moduleHeader!!.parameterDeclarationList.toMutableList()
             if (query != null)
-                results.filter { it.identifier?.text.equals(query) }
+                results.retainAll { it.identifier?.text.equals(query) }
 
             return results
         }
 
-        fun findInnerParameterIdentifiers(
+        fun findInnerParameters(
             containingModule: SvModuleDeclaration,
             query: String? = null
         ): List<SvParameterDeclaration>
         {
             val result: MutableList<SvParameterDeclaration> = mutableListOf()
 
-            val validDecls: List<SvParameterDeclaration> =
+            val validDecls: MutableList<SvParameterDeclaration> =
                 containingModule.moduleItemList.filter { it.parameterDeclaration != null }
-                    .map { it.parameterDeclaration!! }
+                    .map { it.parameterDeclaration!! }.toMutableList()
 
-            // Extract NetDecl and Identifier pairs
             if (query != null)
-                validDecls
-                    .filter { it.identifier?.text.equals(query) }
-                    .forEach { result += it }
+                validDecls.retainAll { it.identifier?.text.equals(query) }
+
+            validDecls.forEach { result += it }
 
             return result
         }

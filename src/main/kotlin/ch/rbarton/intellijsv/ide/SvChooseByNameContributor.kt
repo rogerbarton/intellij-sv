@@ -1,6 +1,6 @@
 package ch.rbarton.intellijsv.ide
 
-import ch.rbarton.intellijsv.core.psi.SvUtil
+import ch.rbarton.intellijsv.core.psi.SvPsiUtil
 import com.intellij.navigation.ChooseByNameContributor
 import com.intellij.navigation.NavigationItem
 import com.intellij.openapi.project.Project
@@ -14,13 +14,13 @@ class SvChooseByNameContributor : ChooseByNameContributor
     {
         // TODO: Also add ModuleInstance, Typedefs
         val names: MutableList<String> = mutableListOf()
-        val modules = SvUtil.findModuleIdentifiers(project)
+        val modules = SvPsiUtil.findModuleDeclarations(project)
         names.addAll(modules.map { it.identifier.text })
         modules.forEach {
-            names.addAll(SvUtil.findPortParameterIdentifiers(it, null).filter { it.identifier != null }.map { it.identifier!!.text })
-            names.addAll(SvUtil.findPortNetIdentifiers(it, null).filter { it.identifier != null }.map { it.identifier!!.text })
-            names.addAll(SvUtil.findInnerParameterIdentifiers(it, null).filter { it.identifier != null }.map { it.identifier!!.text })
-            names.addAll(SvUtil.findInnerNetIdentifiers(it, null).map { it.second.text })
+            names.addAll(SvPsiUtil.findPortParameters(it, null).filter { it.identifier != null }.map { it.identifier!!.text })
+            names.addAll(SvPsiUtil.findPortNets(it, null).filter { it.identifier != null }.map { it.identifier!!.text })
+            names.addAll(SvPsiUtil.findInnerParameters(it, null).filter { it.identifier != null }.map { it.identifier!!.text })
+            names.addAll(SvPsiUtil.findInnerNets(it, null).map { it.second.text })
         }
         return names.toTypedArray()
     }
@@ -30,13 +30,13 @@ class SvChooseByNameContributor : ChooseByNameContributor
     ): Array<NavigationItem>
     {
         val navItems: MutableList<NavigationItem> = mutableListOf()
-        val modules = SvUtil.findModuleIdentifiers(project)
+        val modules = SvPsiUtil.findModuleDeclarations(project)
         navItems.addAll(modules.filter { it.identifier.text.equals(pattern) })
         modules.forEach { module ->
-            navItems.addAll(SvUtil.findPortParameterIdentifiers(module, pattern).filter { it.identifier != null })
-            navItems.addAll(SvUtil.findPortNetIdentifiers(module, pattern).filter { it.identifier != null })
-            navItems.addAll(SvUtil.findInnerParameterIdentifiers(module, pattern).filter { it.identifier != null })
-            navItems.addAll(SvUtil.findInnerNetIdentifiers(module, pattern).map { it.second })
+            navItems.addAll(SvPsiUtil.findPortParameters(module, pattern).filter { it.identifier != null })
+            navItems.addAll(SvPsiUtil.findPortNets(module, pattern).filter { it.identifier != null })
+            navItems.addAll(SvPsiUtil.findInnerParameters(module, pattern).filter { it.identifier != null })
+            navItems.addAll(SvPsiUtil.findInnerNets(module, pattern).map { it.second })
         }
         return navItems.toTypedArray()
     }

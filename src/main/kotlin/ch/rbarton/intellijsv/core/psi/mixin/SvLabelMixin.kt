@@ -11,19 +11,20 @@ import com.intellij.psi.PsiReference
 abstract class SvLabelMixin(node: ASTNode) : SvLabel, ASTWrapperPsiElement(node)
 {
     // -- SvReferenceElement
-    override val referenceElement: PsiElement? get() = identifier
+    override val referenceIdentifier: PsiElement? get() = identifier
 
     override fun getReference(): PsiReference?
     {
         if (identifier == null) return null
         return when (parent)
         {
+            // TODO: somehow this reference is not found by Find Usages
             is SvModuleDeclaration -> object : SvMonoReference<SvLabel>(this, identifier!!.textRangeInParent) {
-                override fun resolve(): PsiElement = (parent as SvModuleDeclaration).identifier
-                override fun isReferenceTo(element: PsiElement): Boolean = element is SvModuleDeclaration && element == parent
+                override fun resolve(): PsiElement = parent
+                override fun isReferenceTo(element: PsiElement): Boolean = element is SvModuleDeclaration && super.isReferenceTo(element)
+                override fun getVariants(): Array<Any> = arrayOf(parent)
             }
             else -> null
         }
-
     }
 }

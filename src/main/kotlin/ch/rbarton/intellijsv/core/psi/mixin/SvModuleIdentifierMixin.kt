@@ -10,6 +10,6 @@ import com.intellij.psi.PsiReference
 abstract class SvModuleIdentifierMixin(node: ASTNode) : SvModuleIdentifier, ASTWrapperPsiElement(node)
 {
     // -- SvReferenceElement Impl
-    override val referenceElement: PsiElement get() = identifier
+    override val referenceIdentifier: PsiElement get() = identifier
     override fun getReference(): PsiReference = SvModuleReferenceImpl(this)
 }

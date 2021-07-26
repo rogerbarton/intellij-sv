@@ -1,8 +1,8 @@
 package ch.rbarton.intellijsv.core.resolve.impl
 
 import ch.rbarton.intellijsv.core.psi.SvModuleDeclaration
-import ch.rbarton.intellijsv.core.psi.SvUtil
-import ch.rbarton.intellijsv.core.psi.ext.SvReferenceElement
+import ch.rbarton.intellijsv.core.psi.SvPsiUtil
+import ch.rbarton.intellijsv.core.psi.ext.SvReferenceOwner
 import ch.rbarton.intellijsv.core.resolve.SvPolyReference
 import ch.rbarton.intellijsv.ide.SvIcons
 import com.intellij.codeInsight.lookup.LookupElement
@@ -14,13 +14,13 @@ import com.intellij.psi.ResolveResult
 /**
  * Defines how to resolve a reference to a Module
  */
-class SvModuleReferenceImpl(element: SvReferenceElement) : SvPolyReference<SvReferenceElement>(element)
+class SvModuleReferenceImpl(owner: SvReferenceOwner) : SvPolyReference<SvReferenceOwner>(owner)
 {
     override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult>
     {
-        if (myElement?.referenceElement == null) return ResolveResult.EMPTY_ARRAY
-        return SvUtil.findModuleIdentifiers(myElement.project, myElement.referenceElement!!.text)
-            .map { PsiElementResolveResult(it.identifier) }.toTypedArray()
+        if (myElement?.referenceIdentifier == null) return ResolveResult.EMPTY_ARRAY
+        return SvPsiUtil.findModuleDeclarations(myElement.project, myElement.referenceIdentifier!!.text)
+            .map { PsiElementResolveResult(it) }.toTypedArray()
     }
 
     override fun resolve(): PsiElement?
@@ -32,12 +32,12 @@ class SvModuleReferenceImpl(element: SvReferenceElement) : SvPolyReference<SvRef
     override fun getVariants(): Array<out LookupElement>
     {
         val variants: MutableList<LookupElement> = mutableListOf()
-        SvUtil.findModuleIdentifiers(myElement.project).forEach {
-            variants += LookupElementBuilder.create(it.identifier).withIcon(SvIcons.SV_MODULE).withTypeText(it.containingFile.text)
+        SvPsiUtil.findModuleDeclarations(myElement.project).forEach {
+            variants += LookupElementBuilder.create(it).withIcon(SvIcons.SV_MODULE).withTypeText(it.containingFile.text)
         }
         return variants.toTypedArray()
     }
 
     override fun isReferenceTo(element: PsiElement): Boolean =
-        element is SvModuleDeclaration && super.isReferenceTo(element.identifier)
+        element is SvModuleDeclaration && super.isReferenceTo(element)
 }

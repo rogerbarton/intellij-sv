@@ -3,7 +3,6 @@ package ch.rbarton.intellijsv.core.psi
 import ch.rbarton.intellijsv.SvFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
@@ -33,15 +32,6 @@ class SvUtil
             return result
         }
 
-        fun findPortIdentifiers(containingModule: SvModuleDeclaration, query: String? = null): List<SvPortDeclaration>
-        {
-            if (containingModule.moduleHeader == null) return emptyList()
-
-            return containingModule.moduleHeader!!.portDeclarationList.filter {
-                it.identifier?.text.equals(query)
-            }
-        }
-
         fun findPortNetIdentifiers(
             containingModule: SvModuleDeclaration,
             query: String? = null
@@ -49,36 +39,28 @@ class SvUtil
         {
             if (containingModule.moduleHeader == null) return emptyList()
 
-            return containingModule.moduleHeader!!.portDeclarationList.filter {
-                it.identifier?.text.equals(query)
-            }
+            val results = containingModule.moduleHeader!!.portDeclarationList
+            if (query != null)
+                results.filter { it.identifier?.text.equals(query) }
+
+            return results
         }
 
         fun findInnerNetIdentifiers(
             containingModule: SvModuleDeclaration,
             query: String? = null
-        ): List<Pair<SvNetDeclaration, PsiElement>>
+        ): List<Pair<SvNetDeclaration, SvNetDeclarationAssignment>>
         {
-            val result: MutableList<Pair<SvNetDeclaration, PsiElement>> = mutableListOf()
+            val result: MutableList<Pair<SvNetDeclaration, SvNetDeclarationAssignment>> = mutableListOf()
 
             // Get NetDeclarations with a valid containing identifier, note: it may have multiple
-            val validDecls: List<SvNetDeclaration> =
-                containingModule.moduleItemList.filter {
-                    it.netDeclaration != null
-                            && it.netDeclaration!!.netDeclarationAssignmentList.any { idd ->
-                        idd.identifier.text.equals(
-                            query
-                        )
-                    }
-                }.map { it.netDeclaration!! }
-
-            // Extract NetDecl and Identifier pairs
-            for (decl in validDecls)
+            for (decl in containingModule.moduleItemList)
             {
-                for (identifierWithDefault in decl.netDeclarationAssignmentList)
+                if(decl.netDeclaration == null) continue
+                for (identifierWithDefault in decl.netDeclaration!!.netDeclarationAssignmentList)
                 {
-                    if (identifierWithDefault.identifier.text.equals(query))
-                        result += Pair(decl, identifierWithDefault.identifier)
+                    if (query == null || identifierWithDefault.identifier.text.equals(query))
+                        result += Pair(decl.netDeclaration!!, identifierWithDefault)
                 }
             }
 
@@ -92,9 +74,11 @@ class SvUtil
         {
             if (containingModule.moduleHeader == null) return emptyList()
 
-            return containingModule.moduleHeader!!.parameterDeclarationList.filter {
-                it.identifier?.text.equals(query)
-            }
+            val results = containingModule.moduleHeader!!.parameterDeclarationList
+            if (query != null)
+                results.filter { it.identifier?.text.equals(query) }
+
+            return results
         }
 
         fun findInnerParameterIdentifiers(
@@ -109,9 +93,10 @@ class SvUtil
                     .map { it.parameterDeclaration!! }
 
             // Extract NetDecl and Identifier pairs
-            validDecls
-                .filter { it.identifier?.text.equals(query) }
-                .forEach { result += it }
+            if (query != null)
+                validDecls
+                    .filter { it.identifier?.text.equals(query) }
+                    .forEach { result += it }
 
             return result
         }

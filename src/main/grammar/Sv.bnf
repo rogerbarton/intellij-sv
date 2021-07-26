@@ -151,6 +151,7 @@ TimeunitsDeclaration ::=
     | timeprecision TimeLiteralRule {
     pin(".*") = 1
     recoverWhile = Semicolon_recover
+    extends = "ch.rbarton.intellijsv.core.psi.mixin.SvTimeunitsDeclarationMixin"
 }
 
 // Module
@@ -198,7 +199,6 @@ PortDeclaration ::=
     AttributeInstance * PortDirection Type IDENTIFIER [ '=' ConstExpr ] {
     pin = 2
     recoverWhile = CSV_recover
-    methods = [ defaultValue = "ConstExpr" ]
     implements = [ "ch.rbarton.intellijsv.core.psi.ext.SvNamedIdentifierOwner" ]
     extends = "ch.rbarton.intellijsv.core.psi.mixin.SvPortDeclarationMixin"
     }
@@ -207,6 +207,7 @@ PortDirection ::= input | output | inout | ref
 
 // Module Item
 
+// TODO: use extends() to make psi tree shallower, like with Expr
 ModuleItem ::=
 
       ParameterDeclaration ';'
@@ -219,7 +220,9 @@ ModuleItem ::=
     | NetDeclaration ';'  // After ModuleInstantiation
     | GenerateRegion
     | TimeunitsDeclaration ';'
-    | ModuleDeclaration
+    | ModuleDeclaration {
+        extends = "ch.rbarton.intellijsv.core.psi.mixin.SvModuleItemMixin"
+    }
 
 NetDeclaration ::= Type <<CSV NetDeclarationAssignment>> !'('{
     pin = 1
@@ -236,6 +239,7 @@ IdentifierWithDefault ::= IDENTIFIER [ '=' Expr ]
 ContinuousAssign ::= assign <<CSV ContinuousAssignItem>> {
     pin = 1
     recoverWhile = Semicolon_recover
+    extends = "ch.rbarton.intellijsv.core.psi.mixin.SvContinuousAssignMixin"
 }
 
 ContinuousAssignItem ::= NetLvalue AssignOperator Expr {
@@ -255,6 +259,7 @@ InitialConstruct ::= initial Statement {
 
 AlwaysConstruct ::= AlwaysKeyword Statement {
     pin = 1
+    extends = "ch.rbarton.intellijsv.core.psi.mixin.SvAlwaysConstructMixin"
 }
 
 FinalConstruct ::= final Statement {
@@ -393,9 +398,11 @@ Type ::=
 TypeDeclaration ::= typedef (
       [ enum | struct | union | class ] IDENTIFIER
     | Type IDENTIFIER VariableDimension *
-)   {
+    ) {
     recoverWhile = Semicolon_recover
     methods = [ class_kw = "class" ]
+    implements = "ch.rbarton.intellijsv.core.psi.ext.SvNamedIdentifierOwner"
+    extends = "ch.rbarton.intellijsv.core.psi.mixin.SvTypeDeclarationMixin"
 }
 
 EnumDeclaration ::= enum [ EnumBaseType ] '{' <<CSV EnumMember>> '}' PackedDimension *
@@ -493,7 +500,7 @@ AtomicExpr ::=
     | <<isNonConstExpr>> HierarchicalIdentifier
 
 PredicateAndExpr ::= Expr '&&&' Expr
-ConcatExpr       ::= '{' <<CSV Expr>> '}'
+ConcatExpr       ::= '{' <<CSV Expr>> '}'       // TODO: binary or n-ary expression cannot have prefix, treating as ATOM
 AssignBinExpr    ::= Expr AssignBinOp Expr
 ArrowBinExpr     ::= Expr ArrowBinOp Expr { rightAssociative = true }
 TernaryExpr      ::= Expr '?' Expr ':' Expr { rightAssociative = true }

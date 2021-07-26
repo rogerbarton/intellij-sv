@@ -15,7 +15,7 @@ object SvIcons
     val SV_MODULE_INSTANCE = AllIcons.Actions.GroupByModule
 
     @JvmField
-    val SV_NET = IconLoader.getIcon("/icons/svNet.svg", SvIcons.javaClass)
+    val SV_NET = IconLoader.getIcon("/icons/net.svg", SvIcons.javaClass)
 
     @JvmField
     val SV_PORT_INPUT = IconLoader.getIcon("/icons/portInput.svg", SvIcons.javaClass)
@@ -57,13 +57,13 @@ object SvIcons
     val SV_ALWAYS_FF = AllIcons.Nodes.Annotationtype
 
     @JvmField
-    val SV_ALWAYS_COMB = AllIcons.Nodes.Interface
+    val SV_ALWAYS_COMB = IconLoader.getIcon("/icons/always.svg", SvIcons.javaClass)
 
     @JvmField
-    val SV_ALWAYS_LATCH = AllIcons.Nodes.Interface
+    val SV_ALWAYS_LATCH = IconLoader.getIcon("/icons/always.svg", SvIcons.javaClass)
 
     @JvmField
-    val SV_ALWAYS = AllIcons.Nodes.Interface
+    val SV_ALWAYS = IconLoader.getIcon("/icons/always.svg", SvIcons.javaClass)
 
     @JvmField
     val SV_MODULE_ITEM = AllIcons.Nodes.Interface
